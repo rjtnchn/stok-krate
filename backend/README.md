@@ -1,58 +1,102 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Backend — Laravel API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Prerequisites
 
-## About Laravel
+| Requirement | Verify with |
+|---|---|
+| PHP 8.5+ | `php -v` |
+| Composer | `composer -V` |
+| MySQL Server (standalone install) | `mysql --version` |
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+If any command is not recognized, that tool either isn't installed or isn't added to your system PATH.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Setup
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Step 1: Set up MySQL
 
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
+**1.1 Log in to MySQL as root**
 ```bash
-composer require laravel/boost --dev
+mysql -u root -p
+```
+Enter the root password you set when you installed MySQL.
 
-php artisan boost:install
+**1.2 Create the project database**
+```sql
+CREATE DATABASE walangbrownout_ims;
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+**1.3 Create a dedicated app user** (do not use root in the app itself)
+```sql
+CREATE USER 'ims_user'@'localhost' IDENTIFIED BY 'strong_password';
+GRANT ALL PRIVILEGES ON walangbrownout_ims.* TO 'ims_user'@'localhost';
+FLUSH PRIVILEGES;
+```
+Replace `strong_password` with your own password — remember it, you'll need it in Step 2.
 
-## Contributing
+**1.4 Confirm it was created**
+```sql
+SHOW DATABASES;
+```
+You should see `walangbrownout_ims` in the list. Then exit:
+```sql
+EXIT;
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Step 2: Configure the environment
 
-## Code of Conduct
+**2.1 Move into the backend folder**
+```bash
+cd backend
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+**2.2 Create your local environment file**
+```bash
+cp .env.example .env
+```
 
-## Security Vulnerabilities
+**2.3 Edit `.env`** and update the database section to match Step 1:
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=walangbrownout_ims
+DB_USERNAME=ims_user
+DB_PASSWORD=strong_password
+```
+`.env` is your personal local file — it's gitignored and never pushed to GitHub. Each teammate has their own copy with their own password.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Step 3: Install and run
 
-## License
+**3.1 Install PHP dependencies**
+```bash
+composer install
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**3.2 Generate the app encryption key**
+```bash
+php artisan key:generate
+```
+
+**3.3 Run migrations** (creates the database tables)
+```bash
+php artisan migrate
+```
+If this prompts about SQLite instead of connecting to MySQL, your `.env` still has `DB_CONNECTION=sqlite` — go back to Step 2.3 and fix it, then run `php artisan config:clear` before trying again.
+
+**3.4 Start the server**
+```bash
+php artisan serve
+```
+You should see:
+```
+INFO  Server running on [http://127.0.0.1:8000].
+```
+Open that URL in your browser to confirm you see Laravel's welcome page.
+
+## Common Issues
+
+| Problem | Fix |
+|---|---|
+| SQLite prompt when running `migrate` | `DB_CONNECTION` in `.env` is not set to `mysql`. Fix it, then run `php artisan config:clear`. |
+| `mysql` not recognized in terminal | MySQL's `bin` folder isn't in your system PATH. |
+| Access denied for user | Double-check `DB_USERNAME` / `DB_PASSWORD` in `.env` match what you created in Step 1.3. |

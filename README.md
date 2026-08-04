@@ -6,11 +6,9 @@ A web-based **Inventory Management System (IMS)** designed for a fictional appli
 
 ## 🚀 Tech Stack
 
-![React](https://img.shields.io/badge/Frontend-React-61DAFB?logo=react\&logoColor=white)
-![Laravel](https://img.shields.io/badge/Backend-Laravel-FF2D20?logo=laravel\&logoColor=white)
-![MySQL](https://img.shields.io/badge/Database-MySQL-4479A1?logo=mysql\&logoColor=white)
-![Docker](https://img.shields.io/badge/DevOps-Docker-2496ED?logo=docker\&logoColor=white)
-![GitHub](https://img.shields.io/badge/Version%20Control-GitHub-181717?logo=github)
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-00546B?style=for-the-badge&logo=mysql&logoColor=white)
 
 ---
 
@@ -34,81 +32,40 @@ The system addresses three core inventory problems:
 
 ```
 walangbrownout-ims/
-├── backend/            # Laravel API
-├── frontend/           # React application
-├── docs/               # Architecture, ERD, and documentation
-├── docker-compose.yml
+├── backend/            # Laravel API — see backend/README.md
+├── frontend/           # React app — see frontend/README.md
 └── README.md
 ```
 
----
-
 ## ⚙️ Getting Started
 
-### Prerequisites
-
-* PHP 8.5+
-* Composer
-* Node.js (LTS)
-* MySQL
-* Docker (optional)
-
 ---
 
-### 1. Clone the Repository
+### Clone the Repository
 
 ```bash
-git clone https://github.com/<your-username>/walangbrownout-ims.git
-cd walangbrownout-ims
+git clone https://github.com/<rjtnchn>/wb-ims.git
+cd wb-ims
 ```
 
 ---
 
-### 2. Backend Setup (Laravel)
-
-```bash
-cd backend
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate
-php artisan serve
+## Project Structure
+ 
 ```
-
----
-
-### 3. Frontend Setup (React)
-
-```bash
-cd frontend
-npm install
-npm run dev
+walangbrownout-ims/
+├── backend/            # Laravel API — see backend/README.md
+├── frontend/           # React app — see frontend/README.md
+└── README.md
 ```
-
----
-
-### 4. Database Configuration
-
-Update `backend/.env` with your local MySQL credentials:
-
-```
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=walangbrownout_ims
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
-```
-
----
-
-### 5. (Optional) Run with Docker
-
-```bash
-docker compose up -d
-```
-
----
+ 
+## Setup
+ 
+This repo has two parts, each with its own setup guide:
+ 
+- **Backend (Laravel + MySQL):** see [`backend/README.md`](./backend/README.md)
+- **Frontend (React):** see [`frontend/README.md`](./frontend/README.md)
+Set up the backend first — the frontend depends on the API running locally.
 
 ## 🌿 Branching Strategy
 

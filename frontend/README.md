@@ -1,16 +1,50 @@
-# React + Vite
+# Frontend — React (Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Prerequisites
 
-Currently, two official plugins are available:
+| Requirement | Verify with |
+|---|---|
+| Node.js (LTS) | `node -v` |
+| npm | `npm -v` |
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The backend API should be running first — see [`../backend/README.md`](../backend/README.md).
 
-## React Compiler
+## Setup
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Step 1: Move into the frontend folder
+```bash
+cd frontend
+```
 
-## Expanding the ESLint configuration
+### Step 2: Create your local environment file
+```bash
+cp .env.example .env
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Step 3: Confirm `.env` contains
+```
+VITE_API_BASE_URL=http://localhost:8000/api/v1
+```
+This should point to your locally running Laravel API.
+
+### Step 4: Install dependencies
+```bash
+npm install
+```
+
+### Step 5: Start the dev server
+```bash
+npm run dev
+```
+It should print a local URL, typically:
+```
+http://localhost:5173
+```
+Open it in your browser to confirm the app loads.
+
+## Common Issues
+
+| Problem | Fix |
+|---|---|
+| API requests fail / network error | Confirm the backend is running at `http://localhost:8000` first. |
+| Blank page or build errors | Delete `node_modules` and run `npm install` again. |
