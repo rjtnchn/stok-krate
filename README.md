@@ -31,7 +31,7 @@ The system addresses three core inventory problems:
 ## 📁 Project Structure
 
 ```
-walangbrownout-ims/
+wb-ims/
 ├── backend/            # Laravel API — see backend/README.md
 ├── frontend/           # React app — see frontend/README.md
 └── README.md
@@ -49,15 +49,6 @@ cd wb-ims
 ```
 
 ---
-
-## Project Structure
- 
-```
-walangbrownout-ims/
-├── backend/            # Laravel API — see backend/README.md
-├── frontend/           # React app — see frontend/README.md
-└── README.md
-```
  
 ## Setup
  
@@ -89,8 +80,8 @@ We follow **Conventional Commits**:
 
 ```
 feat: add product batch model
-fix: correct FEFO sorting logic
-docs: update ERD
+fix: correct sorting logic
+docs: update README
 chore: initialize project structure
 ```
 
