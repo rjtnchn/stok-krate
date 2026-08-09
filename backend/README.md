@@ -22,13 +22,13 @@ Enter the root password you set when you installed MySQL.
 
 **1.2 Create the project database**
 ```sql
-CREATE DATABASE walangbrownout_ims;
+CREATE DATABASE stok_krate_db;
 ```
 
 **1.3 Create a dedicated app user** (do not use root in the app itself)
 ```sql
 CREATE USER 'ims_user'@'localhost' IDENTIFIED BY 'strong_password';
-GRANT ALL PRIVILEGES ON walangbrownout_ims.* TO 'ims_user'@'localhost';
+GRANT ALL PRIVILEGES ON stok_krate_db.* TO 'ims_user'@'localhost';
 FLUSH PRIVILEGES;
 ```
 Replace `strong_password` with your own password — remember it, you'll need it in Step 2.
@@ -37,7 +37,7 @@ Replace `strong_password` with your own password — remember it, you'll need it
 ```sql
 SHOW DATABASES;
 ```
-You should see `walangbrownout_ims` in the list. Then exit:
+You should see `stok_krate_db` in the list. Then exit:
 ```sql
 EXIT;
 ```
@@ -59,7 +59,7 @@ cp .env.example .env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=walangbrownout_ims
+DB_DATABASE=stok_krate_db
 DB_USERNAME=ims_user
 DB_PASSWORD=strong_password
 ```
@@ -92,11 +92,3 @@ You should see:
 INFO  Server running on [http://127.0.0.1:8000].
 ```
 Open that URL in your browser to confirm you see Laravel's welcome page.
-
-## Common Issues
-
-| Problem | Fix |
-|---|---|
-| SQLite prompt when running `migrate` | `DB_CONNECTION` in `.env` is not set to `mysql`. Fix it, then run `php artisan config:clear`. |
-| `mysql` not recognized in terminal | MySQL's `bin` folder isn't in your system PATH. |
-| Access denied for user | Double-check `DB_USERNAME` / `DB_PASSWORD` in `.env` match what you created in Step 1.3. |
