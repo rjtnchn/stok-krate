@@ -89,8 +89,8 @@ We follow **Conventional Commits**:
  
 ```
 feat: add product batch model
-fix: correct FEFO sorting logic
-docs: update ERD
+fix: correct sorting logic
+docs: update README
 chore: initialize project structure
 ```
  

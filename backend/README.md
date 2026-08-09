@@ -5,7 +5,7 @@
 | Requirement | Verify with |
 |---|---|
 | PHP 8.5+ | `php -v` |
-| Composer | `composer -V` |
+| Composer | `composer -v` |
 | MySQL Server (standalone install) | `mysql --version` |
 
 If any command is not recognized, that tool either isn't installed or isn't added to your system PATH.
