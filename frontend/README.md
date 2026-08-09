@@ -41,10 +41,3 @@ It should print a local URL, typically:
 http://localhost:5173
 ```
 Open it in your browser to confirm the app loads.
-
-## Common Issues
-
-| Problem | Fix |
-|---|---|
-| API requests fail / network error | Confirm the backend is running at `http://localhost:8000` first. |
-| Blank page or build errors | Delete `node_modules` and run `npm install` again. |
