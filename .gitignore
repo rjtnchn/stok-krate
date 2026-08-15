@@ -34,3 +34,6 @@ frontend/node_modules
 frontend/dist
 frontend/.env
 frontend/.env.local
+
+# Kiro IDE configuration
+.kiro/
