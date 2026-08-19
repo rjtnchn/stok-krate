@@ -2,36 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Item;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function show()
+    public function show($id)
     {
-        $productName = 'Sample Product';
-        $productPrice = 10000;
-        $quantity = 5;
-
-        $totalValue = $productPrice * $quantity;
-
-       $product= [
-        'name' => 'Refrigerator',
-        'price' => 10000,
-        'quantity' => 5,
-];
-
-        $totalValue = $product['price'] * $product['quantity'];
-
-        return $totalValue;
+        return Item::find($id);
     }
 
-     function productLabel($productName) {
+    function productLabel($productName)
+    {
         return "Product: " . $productName;
     }
 
-    function calculateInventoryValue($productPrice, $quantity) {
+    function calculateInventoryValue($productPrice, $quantity)
+    {
         return $productPrice * $quantity;
     }
-
-
 }
