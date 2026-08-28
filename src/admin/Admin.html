@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WalangBrownout — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-deep:#0E1620;
+  --card:#FFFFFF;
+  --accent-cool:#3FC7B8; --accent-cool-dim:#2A9C90;
+  --accent-warm:#F2A65A;
+  --text-onLight:#16212B; --text-onLight-muted:#6B7A88;
+  --border-light:#E1DCD1;
+  --ok:#3FC7B8; --warn:#F2A65A; --crit:#E2695B;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:'Inter',sans-serif; background:#E8E4DB; color:var(--text-onLight); min-height:100vh; padding:32px;}
+button{font-family:inherit; cursor:pointer;}
+table{border-collapse:collapse; width:100%;}
+
+.frame{background:var(--card); max-width:1320px; margin:0 auto; border-radius:16px; box-shadow:0 20px 50px -18px rgba(20,25,30,0.25); overflow:hidden;}
+
+/* header */
+.app-header{display:flex; align-items:center; gap:20px; padding:16px 28px; border-bottom:1px solid var(--border-light); background:var(--card);}
+.logo-block{display:flex; align-items:center; gap:10px;}
+.logo-mark{width:34px;height:34px;border-radius:8px; background:linear-gradient(135deg,var(--accent-cool),var(--accent-cool-dim)); display:flex;align-items:center;justify-content:center; flex-shrink:0;}
+.logo-mark svg{width:18px;height:18px;}
+.wordmark{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:15px;}
+.wordmark span{color:var(--accent-cool);}
+.header-nav{display:flex; gap:26px; margin-left:8px;}
+.header-nav a{font-size:12.5px; font-weight:500; color:var(--text-onLight-muted); text-decoration:none;}
+.header-nav a.active{color:var(--text-onLight); font-weight:600;}
+.header-right{margin-left:auto; display:flex; align-items:center; gap:16px;}
+.avatar{width:32px;height:32px;border-radius:50%; background:linear-gradient(135deg,var(--accent-warm),#d98a3a); display:flex;align-items:center;justify-content:center; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:11px; color:#2b1a05;}
+
+/* layout: sidebar + content */
+.admin-shell{display:flex; min-height:640px;}
+.sidebar{width:216px; flex-shrink:0; background:#FAF8F3; border-right:1px solid var(--border-light); padding:20px 12px;}
+.side-group{margin-bottom:6px;}
+.side-group-label{font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-onLight-muted); padding:10px 10px 6px;}
+.side-btn{width:100%; display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:8px; border:none; background:none; font-size:12.8px; font-weight:500; color:var(--text-onLight-muted); text-align:left; margin-bottom:2px;}
+.side-btn svg{width:15px;height:15px; flex-shrink:0;}
+.side-btn:hover{background:#F0ECE3; color:var(--text-onLight);}
+.side-btn.active{background:rgba(63,199,184,0.12); color:var(--accent-cool-dim); font-weight:600;}
+.side-divider{height:1px; background:var(--border-light); margin:12px 6px;}
+
+.content{flex:1; padding:26px 30px 36px; min-width:0;}
+.view-panel{display:none;}
+.view-panel.show{display:block;}
+
+.top-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px;}
+.back-link{display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--text-onLight-muted); background:none; border:none;}
+.back-link svg{width:14px;height:14px;}
+.back-link:hover{color:var(--text-onLight);}
+.role-tag{display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.06em; color:var(--accent-cool-dim); background:rgba(63,199,184,0.10); border:1px solid rgba(63,199,184,0.3); padding:4px 10px; border-radius:14px;}
+
+h1.page-title{font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:600; margin:0 0 4px 0;}
+p.page-sub{margin:0 0 20px 0; font-size:12.8px; color:var(--text-onLight-muted);}
+
+.panel{border:1px solid var(--border-light); border-radius:13px; padding:20px 22px;}
+.panel + .panel{margin-top:18px;}
+.panel h3{font-family:'Space Grotesk',sans-serif; font-size:14.5px; margin:0 0 4px 0;}
+.panel .panel-sub{font-size:11.5px; color:var(--text-onLight-muted); margin:0 0 16px 0;}
+
+/* ===== list toolbars ===== */
+.list-toolbar{display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; align-items:center;}
+.search-box{position:relative; flex:1; min-width:220px;}
+.search-box svg{position:absolute; left:11px; top:50%; transform:translateY(-50%); width:14px;height:14px; color:var(--text-onLight-muted);}
+.search-box input{width:100%; padding:10px 12px 10px 32px; border:1px solid var(--border-light); border-radius:9px; font-size:12.8px; outline:none;}
+.search-box input:focus{border-color:var(--accent-cool-dim); box-shadow:0 0 0 3px rgba(63,199,184,0.16);}
+.filter-select{padding:10px 12px; border:1px solid var(--border-light); border-radius:9px; font-size:12.5px; background:#fff; color:var(--text-onLight);}
+.primary-btn{background:linear-gradient(135deg,var(--accent-cool),var(--accent-cool-dim)); color:#08201C; border:none; border-radius:9px; padding:10px 16px; font-weight:600; font-size:12.5px; display:flex; align-items:center; gap:6px; flex-shrink:0;}
+.primary-btn svg{width:14px;height:14px;}
+.segmented{display:flex; border:1px solid var(--border-light); border-radius:9px; padding:3px; flex-shrink:0;}
+.segmented button{border:none; background:none; padding:8px 14px; border-radius:7px; font-size:12px; font-weight:600; color:var(--text-onLight-muted);}
+.segmented button.active{background:var(--text-onLight); color:#fff;}
+
+/* ===== tables ===== */
+.data-table{font-size:12.6px;}
+.data-table thead th{text-align:left; font-size:10.3px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-onLight-muted); font-weight:700; padding:0 10px 10px; border-bottom:1px solid var(--border-light);}
+.data-table tbody td{padding:12px 10px; border-bottom:1px solid #F0ECE3; vertical-align:middle;}
+.data-table tbody tr:last-child td{border-bottom:none;}
+.data-table tbody tr:hover{background:#FBFAF7;}
+.name-cell{display:flex; align-items:center; gap:10px;}
+.mini-avatar{width:30px;height:30px;border-radius:50%; background:linear-gradient(135deg,var(--accent-warm),#d98a3a); display:flex;align-items:center;justify-content:center; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:10.5px; color:#2b1a05; flex-shrink:0;}
+.name-cell .nm{font-weight:600;}
+.name-cell .sub{font-size:10.8px; color:var(--text-onLight-muted);}
+.chip{display:inline-flex; align-items:center; gap:5px; font-size:10.3px; font-weight:600; padding:3px 9px; border-radius:12px;}
+.chip.role-Admin{background:rgba(226,105,91,0.10); color:#b8392c;}
+.chip.role-Staff{background:rgba(63,199,184,0.10); color:var(--accent-cool-dim);}
+.chip.role-Picking{background:rgba(242,166,90,0.14); color:#b3701f;}
+.chip.role-Receiving{background:rgba(126,110,220,0.12); color:#5b4bc4;}
+.chip.status-active{background:rgba(63,199,184,0.10); color:var(--accent-cool-dim);}
+.chip.status-inactive{background:#EDEAE1; color:var(--text-onLight-muted);}
+.chip.status-fresh{background:rgba(63,199,184,0.10); color:var(--accent-cool-dim);}
+.chip.status-low{background:rgba(242,166,90,0.14); color:#b3701f;}
+.chip.status-critical{background:rgba(226,105,91,0.10); color:#b8392c;}
+.row-actions{display:flex; gap:6px; justify-content:flex-end;}
+.icon-btn{width:28px;height:28px; border-radius:7px; border:1px solid var(--border-light); background:#fff; display:flex; align-items:center; justify-content:center; color:var(--text-onLight-muted);}
+.icon-btn svg{width:13px;height:13px;}
+.icon-btn:hover{border-color:#c9c2b3; color:var(--text-onLight);}
+.icon-btn.danger:hover{border-color:rgba(226,105,91,0.5); color:var(--crit); background:rgba(226,105,91,0.06);}
+.empty-row td{text-align:center; padding:34px 10px; color:var(--text-onLight-muted); font-size:12.5px;}
+.table-footer{display:flex; justify-content:space-between; align-items:center; margin-top:14px; font-size:11.3px; color:var(--text-onLight-muted);}
+
+/* ===== forms (add/edit) ===== */
+.form-layout{display:grid; grid-template-columns:1.5fr 1fr; gap:18px; align-items:start;}
+.field-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:4px;}
+.field{grid-column:span 1;}
+.field.full{grid-column:span 2;}
+.field label{display:block; font-size:11.5px; font-weight:600; color:var(--text-onLight-muted); margin-bottom:6px;}
+.field label .req{color:var(--crit);}
+.field input, .field select, .field textarea{width:100%; padding:10px 12px; border:1px solid var(--border-light); border-radius:9px; font-size:13px; outline:none; font-family:inherit; color:var(--text-onLight); background:#fff;}
+.field textarea{resize:vertical; min-height:64px;}
+.field input:focus, .field select:focus, .field textarea:focus{border-color:var(--accent-cool-dim); box-shadow:0 0 0 3px rgba(63,199,184,0.16);}
+.field input.invalid{border-color:var(--crit); box-shadow:0 0 0 3px rgba(226,105,91,0.12);}
+.field .hint{font-size:10.7px; color:var(--text-onLight-muted); margin-top:5px;}
+.field .err{font-size:10.7px; color:var(--crit); margin-top:5px; display:none;}
+.field .err.show{display:block;}
+
+.divider-label{font-size:10.3px; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-onLight-muted); margin:20px 0 12px 0; display:flex; align-items:center; gap:10px;}
+.divider-label::after{content:''; flex:1; height:1px; background:var(--border-light);}
+
+.role-cards{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:6px;}
+.role-card{border:1px solid var(--border-light); border-radius:10px; padding:12px 10px; text-align:left; background:#fff;}
+.role-card .rc-name{font-weight:600; font-size:12.3px; margin-bottom:3px;}
+.role-card .rc-desc{font-size:10.3px; color:var(--text-onLight-muted); line-height:1.4;}
+.role-card.selected{border-color:var(--accent-cool-dim); background:rgba(63,199,184,0.07); box-shadow:0 0 0 1px var(--accent-cool-dim) inset;}
+.role-card:hover:not(.selected){border-color:#c9c2b3;}
+
+.perm-list{display:flex; flex-direction:column; gap:2px;}
+.perm-row{display:flex; align-items:center; justify-content:space-between; padding:10px 4px; border-bottom:1px solid #F0ECE3;}
+.perm-row:last-child{border-bottom:none;}
+.perm-info .pn{font-weight:600; font-size:12.5px;}
+.perm-info .pd{font-size:10.7px; color:var(--text-onLight-muted); margin-top:2px;}
+.switch{position:relative; width:36px; height:20px; flex-shrink:0;}
+.switch input{opacity:0; width:0; height:0;}
+.switch .track{position:absolute; inset:0; background:#D8D2C4; border-radius:20px; transition:.18s;}
+.switch .track::before{content:''; position:absolute; width:15px; height:15px; left:2.5px; top:2.5px; background:#fff; border-radius:50%; transition:.18s; box-shadow:0 1px 3px rgba(0,0,0,0.25);}
+.switch input:checked + .track{background:var(--accent-cool-dim);}
+.switch input:checked + .track::before{transform:translateX(16px);}
+
+.preview-card{display:flex; flex-direction:column; align-items:center; text-align:center; padding-top:6px;}
+.preview-avatar{width:64px;height:64px;border-radius:50%; background:linear-gradient(135deg,var(--accent-warm),#d98a3a); display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:20px; color:#2b1a05; margin-bottom:12px;}
+.preview-box-icon{width:64px;height:64px;border-radius:16px; background:rgba(63,199,184,0.12); display:flex; align-items:center; justify-content:center; font-size:26px; margin-bottom:12px;}
+.preview-name{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:14.5px;}
+.preview-email{font-size:11.5px; color:var(--text-onLight-muted); margin-top:2px;}
+.preview-role-chip{margin-top:10px; display:inline-flex; align-items:center; gap:6px; font-size:10.8px; font-weight:600; padding:4px 11px; border-radius:14px; background:rgba(63,199,184,0.10); color:var(--accent-cool-dim); border:1px solid rgba(63,199,184,0.3);}
+.preview-meta{width:100%; margin-top:16px; border-top:1px solid var(--border-light); padding-top:14px;}
+.preview-meta .pm-row{display:flex; justify-content:space-between; font-size:11.8px; padding:6px 0;}
+.preview-meta .pm-row span:first-child{color:var(--text-onLight-muted);}
+.preview-meta .pm-row span:last-child{font-weight:600; text-align:right; max-width:60%;}
+
+.status-row{display:flex; align-items:center; justify-content:space-between; margin-top:16px; padding-top:16px; border-top:1px solid var(--border-light);}
+.status-row .sr-text .pn{font-weight:600; font-size:12.5px;}
+.status-row .sr-text .pd{font-size:10.7px; color:var(--text-onLight-muted); margin-top:2px;}
+
+.danger-zone{border:1px solid rgba(226,105,91,0.3); background:rgba(226,105,91,0.05); border-radius:13px; padding:16px 18px; margin-top:18px;}
+.danger-zone h3{color:#b8392c;}
+.danger-zone p{font-size:11.8px; color:#8a3427; margin:0 0 12px 0;}
+.danger-btn{background:#fff; border:1px solid var(--crit); color:var(--crit); border-radius:9px; padding:9px 15px; font-weight:600; font-size:12.3px; display:flex; align-items:center; gap:7px;}
+.danger-btn:hover{background:var(--crit); color:#fff;}
+.danger-btn svg{width:13px;height:13px;}
+
+.form-actions{display:flex; gap:10px; margin-top:18px;}
+.btn-cancel{flex:0 0 auto; border:1px solid var(--border-light); background:var(--card); border-radius:10px; padding:13px 20px; font-weight:600; font-size:13px; color:var(--text-onLight-muted);}
+.btn-cancel:hover{border-color:#c9c2b3; color:var(--text-onLight);}
+.place-btn{flex:1; background:linear-gradient(135deg,var(--accent-cool),var(--accent-cool-dim)); color:#08201C; border:none; border-radius:10px; padding:13px; font-weight:600; font-size:13.5px; display:flex; align-items:center; justify-content:center; gap:8px;}
+.place-btn:disabled{opacity:0.4;}
+.place-btn svg{width:15px;height:15px;}
+
+.pw-strength{display:flex; gap:4px; margin-top:8px;}
+.pw-strength .seg{flex:1; height:4px; border-radius:3px; background:#E1DCD1;}
+.pw-strength .seg.weak{background:var(--crit);}
+.pw-strength .seg.ok{background:var(--warn);}
+.pw-strength .seg.strong{background:var(--ok);}
+.setup-toggle{display:flex; border:1px solid var(--border-light); border-radius:10px; padding:3px; margin-bottom:16px;}
+.setup-toggle button{flex:1; border:none; background:none; padding:9px; border-radius:8px; font-size:12px; font-weight:600; color:var(--text-onLight-muted);}
+.setup-toggle button.active{background:var(--text-onLight); color:#fff;}
+
+/* item form specific */
+.batch-mini-table{font-size:11.6px; margin-top:6px;}
+.batch-mini-table th{text-align:left; font-size:10px; text-transform:uppercase; color:var(--text-onLight-muted); padding:0 8px 8px;}
+.batch-mini-table td{padding:8px; border-top:1px solid #F0ECE3;}
+
+/* ===== activity log ===== */
+.log-filter-tabs{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
+.log-filter-tabs button{border:1px solid var(--border-light); background:#fff; border-radius:20px; padding:7px 14px; font-size:11.8px; font-weight:600; color:var(--text-onLight-muted);}
+.log-filter-tabs button.active{background:var(--text-onLight); color:#fff; border-color:var(--text-onLight);}
+.log-entry{display:flex; gap:14px; padding:14px 4px; border-bottom:1px solid #F0ECE3;}
+.log-entry:last-child{border-bottom:none;}
+.log-icon{width:32px;height:32px;border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:15px;}
+.log-icon.type-user{background:rgba(63,199,184,0.12);}
+.log-icon.type-inventory{background:rgba(242,166,90,0.14);}
+.log-icon.type-order{background:rgba(126,110,220,0.12);}
+.log-icon.type-audit{background:rgba(226,105,91,0.10);}
+.log-body{flex:1;}
+.log-title{font-size:12.6px; font-weight:600;}
+.log-title b{font-weight:700;}
+.log-meta{font-size:10.9px; color:var(--text-onLight-muted); margin-top:2px;}
+.log-time{font-size:10.9px; color:var(--text-onLight-muted); white-space:nowrap; flex-shrink:0; padding-top:2px;}
+
+/* ===== audit summary ===== */
+.audit-stats-row{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px;}
+.audit-stat{border:1px solid var(--border-light); border-radius:12px; padding:16px 18px;}
+.audit-stat .as-label{font-size:10.3px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-onLight-muted); font-weight:700; margin-bottom:8px;}
+.audit-stat .as-value{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:22px;}
+.audit-stat .as-value.neg{color:var(--crit);}
+.audit-stat .as-sub{font-size:11px; color:var(--text-onLight-muted); margin-top:4px;}
+.variance-cell{font-weight:700; font-family:'IBM Plex Mono',monospace; font-size:12px;}
+.variance-cell.neg{color:var(--crit);}
+.variance-cell.zero{color:var(--text-onLight-muted); font-weight:500;}
+
+/* ===== modal ===== */
+.modal-overlay{position:fixed; inset:0; background:rgba(14,22,32,0.5); display:none; align-items:center; justify-content:center; z-index:200; padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#fff; border-radius:14px; max-width:420px; width:100%; padding:24px; box-shadow:0 30px 60px -20px rgba(0,0,0,0.4);}
+.modal-icon{width:48px;height:48px;border-radius:12px; background:rgba(226,105,91,0.10); display:flex; align-items:center; justify-content:center; margin-bottom:14px;}
+.modal-icon svg{width:22px;height:22px; color:var(--crit);}
+.modal-box h3{font-family:'Space Grotesk',sans-serif; font-size:16px; margin:0 0 8px 0;}
+.modal-box p{font-size:12.6px; color:var(--text-onLight-muted); margin:0 0 18px 0; line-height:1.5;}
+.modal-box p b{color:var(--text-onLight);}
+.modal-actions{display:flex; gap:10px;}
+.modal-actions button{flex:1; padding:11px; border-radius:9px; font-weight:600; font-size:12.8px;}
+.modal-cancel{border:1px solid var(--border-light); background:#fff; color:var(--text-onLight);}
+.modal-confirm{border:none; background:var(--crit); color:#fff;}
+.modal-confirm:hover{background:#c94f41;}
+
+.toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--bg-deep); color:#EAF1F5; padding:11px 18px; border-radius:10px; font-size:12.5px; display:flex; align-items:center; gap:9px; box-shadow:0 12px 32px -10px rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition:.25s; z-index:300;}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+.toast svg{width:15px;height:15px; color:var(--accent-cool); flex-shrink:0;}
+
+@media (max-width:900px){ .admin-shell{flex-direction:column;} .sidebar{width:100%; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--border-light);} .form-layout{grid-template-columns:1fr;} .field-grid{grid-template-columns:1fr;} .field.full{grid-column:span 1;} .role-cards{grid-template-columns:repeat(2,1fr);} .audit-stats-row{grid-template-columns:repeat(2,1fr);} .header-nav{display:none;} }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="app-header">
+    <div class="logo-block">
+      <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2L4 7v10l8 5 8-5V7l-8-5z" stroke="#04211D" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 9v6M9 12h6" stroke="#04211D" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+      <div class="wordmark">Walang<span>Brownout</span></div>
+    </div>
+    <div class="header-nav">
+      <a>Picking</a><a>Receiving</a><a>Orders</a><a class="active">Admin</a>
+    </div>
+    <div class="header-right"><div class="avatar">JC</div></div>
+  </div>
+
+  <div class="admin-shell">
+    <!-- ================= SIDEBAR ================= -->
+    <div class="sidebar">
+      <div class="side-group">
+        <div class="side-group-label">Users</div>
+        <button class="side-btn active" data-nav="users-list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>User list</button>
+        <button class="side-btn" data-nav="user-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>Add user</button>
+      </div>
+      <div class="side-divider"></div>
+      <div class="side-group">
+        <div class="side-group-label">Items &amp; batches</div>
+        <button class="side-btn" data-nav="items-list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.27 6.96L12 12l8.73-5.04M12 22.08V12"/></svg>Item &amp; batch list</button>
+        <button class="side-btn" data-nav="item-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M12 22.08V12M3.27 6.96L12 12l8.73-5.04"/></svg>Add item</button>
+        <button class="side-btn" data-nav="batch-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2M12 12v4M10 14h4"/></svg>Add batch</button>
+      </div>
+      <div class="side-divider"></div>
+      <div class="side-group">
+        <div class="side-group-label">Reports</div>
+        <button class="side-btn" data-nav="activity-log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6M9 9h1"/></svg>Activity log</button>
+        <button class="side-btn" data-nav="audit-summary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Audit summary</button>
+      </div>
+    </div>
+
+    <!-- ================= CONTENT ================= -->
+    <div class="content">
+
+      <!-- ========== USER LIST ========== -->
+      <div class="view-panel show" id="view-users-list">
+        <div class="top-row">
+          <div><h1 class="page-title">User list</h1><p class="page-sub" style="margin-bottom:0;">Everyone with access to WalangBrownout, across all branches</p></div>
+          <div class="role-tag">ROLE — ADMIN · USERS</div>
+        </div>
+        <div class="list-toolbar">
+          <div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg><input type="text" id="userSearch" placeholder="Search by name, email, or employee ID..."></div>
+          <select class="filter-select" id="userRoleFilter">
+            <option value="">All roles</option>
+            <option>Admin</option><option>Staff</option><option>Picking</option><option>Receiving</option>
+          </select>
+          <button class="primary-btn" data-nav="user-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Add user</button>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>Name</th><th>Role</th><th>Branch</th><th>Status</th><th style="text-align:right;">Actions</th></tr></thead>
+          <tbody id="userTableBody"></tbody>
+        </table>
+        <div class="table-footer"><span id="userCountLabel">— users</span><span>Showing all results</span></div>
+      </div>
+
+      <!-- ========== ADD USER ========== -->
+      <div class="view-panel" id="view-user-add">
+        <div class="top-row">
+          <button class="back-link" data-nav="users-list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to user list</button>
+          <div class="role-tag">ROLE — ADMIN · USERS</div>
+        </div>
+        <h1 class="page-title">Add a user</h1>
+        <p class="page-sub">Create an account for a new team member and set what they can access</p>
+        <div class="form-layout">
+          <div>
+            <div class="panel">
+              <h3>Basic information</h3>
+              <p class="panel-sub">This is used to identify the user across the app and in order/picking logs.</p>
+              <div class="field-grid">
+                <div class="field"><label>Full name <span class="req">*</span></label><input type="text" id="add-uName" placeholder="e.g. Jomari Cruz"><div class="err" id="add-errName">Enter the user's full name.</div></div>
+                <div class="field"><label>Employee ID</label><input type="text" id="add-uEmpId" placeholder="e.g. WB-EMP-118"><div class="hint">Leave blank to auto-assign.</div></div>
+                <div class="field"><label>Email address <span class="req">*</span></label><input type="text" id="add-uEmail" placeholder="e.g. jomari.cruz@wb.ph"><div class="err" id="add-errEmail">Enter a valid work email.</div></div>
+                <div class="field"><label>Contact number</label><input type="text" id="add-uPhone" placeholder="e.g. 0917 123 4567"></div>
+                <div class="field full"><label>Assigned warehouse / branch <span class="req">*</span></label>
+                  <select id="add-uWarehouse"><option value="">Select branch...</option><option>Lipa City, Batangas — Main DC</option><option>Cabuyao, Laguna — South Hub</option><option>Quezon City — North Hub</option><option>Davao City — Mindanao Hub</option></select>
+                </div>
+              </div>
+              <div class="divider-label">Role</div>
+              <div class="role-cards" id="add-roleCards">
+                <button class="role-card" data-role="Admin"><div class="rc-name">Admin</div><div class="rc-desc">Full system access</div></button>
+                <button class="role-card selected" data-role="Staff"><div class="rc-name">Staff</div><div class="rc-desc">Orders &amp; customers</div></button>
+                <button class="role-card" data-role="Picking"><div class="rc-name">Picking</div><div class="rc-desc">Warehouse fulfillment</div></button>
+                <button class="role-card" data-role="Receiving"><div class="rc-name">Receiving</div><div class="rc-desc">Inbound stock</div></button>
+              </div>
+            </div>
+            <div class="panel">
+              <h3>Permissions</h3>
+              <p class="panel-sub">Set automatically from the selected role — adjust individually if needed.</p>
+              <div class="perm-list" id="add-permList"></div>
+            </div>
+          </div>
+          <div>
+            <div class="panel preview-card">
+              <div class="preview-avatar" id="add-pvAvatar">—</div>
+              <div class="preview-name" id="add-pvName">New user</div>
+              <div class="preview-email" id="add-pvEmail">—</div>
+              <div class="preview-role-chip" id="add-pvRoleChip">STAFF</div>
+              <div class="preview-meta">
+                <div class="pm-row"><span>Branch</span><span id="add-pvBranch">Not set</span></div>
+                <div class="pm-row"><span>Employee ID</span><span id="add-pvEmpId">Auto-assigned</span></div>
+                <div class="pm-row"><span>Phone</span><span id="add-pvPhone">Not set</span></div>
+              </div>
+              <div class="status-row"><div class="sr-text"><div class="pn">Active on creation</div><div class="pd">User can sign in immediately</div></div><label class="switch"><input type="checkbox" id="add-uActive" checked><span class="track"></span></label></div>
+            </div>
+            <div class="panel">
+              <h3>Account setup</h3>
+              <div class="setup-toggle"><button type="button" class="active" id="add-setupInviteBtn">Send email invite</button><button type="button" id="add-setupPwBtn">Set temp password</button></div>
+              <div id="add-inviteInfo"><p class="panel-sub" style="margin-bottom:0;">An invite link is sent to the email above. The user sets their own password.</p></div>
+              <div id="add-pwInfo" style="display:none;">
+                <div class="field"><label>Temporary password <span class="req">*</span></label><input type="text" id="add-uTempPw" placeholder="Enter a temporary password">
+                  <div class="pw-strength"><div class="seg" id="add-pwSeg1"></div><div class="seg" id="add-pwSeg2"></div><div class="seg" id="add-pwSeg3"></div></div>
+                  <div class="hint">The user changes this on first sign-in.</div>
+                </div>
+              </div>
+            </div>
+            <div class="form-actions"><button class="btn-cancel" data-nav="users-list">Cancel</button><button class="place-btn" id="add-createBtn" disabled>Create user <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== EDIT USER ========== -->
+      <div class="view-panel" id="view-user-edit">
+        <div class="top-row">
+          <button class="back-link" data-nav="users-list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to user list</button>
+          <div class="role-tag">ROLE — ADMIN · USERS</div>
+        </div>
+        <h1 class="page-title">Edit user</h1>
+        <p class="page-sub" id="edit-pageSub">Update account details, role, and access</p>
+        <div class="form-layout">
+          <div>
+            <div class="panel">
+              <h3>Basic information</h3>
+              <div class="field-grid">
+                <div class="field"><label>Full name <span class="req">*</span></label><input type="text" id="edit-uName"></div>
+                <div class="field"><label>Employee ID</label><input type="text" id="edit-uEmpId" disabled style="opacity:0.6;"></div>
+                <div class="field"><label>Email address <span class="req">*</span></label><input type="text" id="edit-uEmail"><div class="err" id="edit-errEmail">Enter a valid work email.</div></div>
+                <div class="field"><label>Contact number</label><input type="text" id="edit-uPhone"></div>
+                <div class="field full"><label>Assigned warehouse / branch <span class="req">*</span></label>
+                  <select id="edit-uWarehouse"><option value="">Select branch...</option><option>Lipa City, Batangas — Main DC</option><option>Cabuyao, Laguna — South Hub</option><option>Quezon City — North Hub</option><option>Davao City — Mindanao Hub</option></select>
+                </div>
+              </div>
+              <div class="divider-label">Role</div>
+              <div class="role-cards" id="edit-roleCards">
+                <button class="role-card" data-role="Admin"><div class="rc-name">Admin</div><div class="rc-desc">Full system access</div></button>
+                <button class="role-card" data-role="Staff"><div class="rc-name">Staff</div><div class="rc-desc">Orders &amp; customers</div></button>
+                <button class="role-card" data-role="Picking"><div class="rc-name">Picking</div><div class="rc-desc">Warehouse fulfillment</div></button>
+                <button class="role-card" data-role="Receiving"><div class="rc-name">Receiving</div><div class="rc-desc">Inbound stock</div></button>
+              </div>
+            </div>
+            <div class="panel">
+              <h3>Permissions</h3>
+              <p class="panel-sub">Adjusted individually for this user — changing role resets these to defaults.</p>
+              <div class="perm-list" id="edit-permList"></div>
+            </div>
+            <div class="danger-zone">
+              <h3>Danger zone</h3>
+              <p>Removing this user revokes access immediately. Their past order and picking history is kept for records.</p>
+              <button class="danger-btn" id="edit-openDeleteBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"/></svg>Delete this user</button>
+            </div>
+          </div>
+          <div>
+            <div class="panel preview-card">
+              <div class="preview-avatar" id="edit-pvAvatar">—</div>
+              <div class="preview-name" id="edit-pvName">—</div>
+              <div class="preview-email" id="edit-pvEmail">—</div>
+              <div class="preview-role-chip" id="edit-pvRoleChip">—</div>
+              <div class="preview-meta">
+                <div class="pm-row"><span>Branch</span><span id="edit-pvBranch">—</span></div>
+                <div class="pm-row"><span>Employee ID</span><span id="edit-pvEmpId">—</span></div>
+                <div class="pm-row"><span>Phone</span><span id="edit-pvPhone">—</span></div>
+              </div>
+              <div class="status-row"><div class="sr-text"><div class="pn">Account active</div><div class="pd">Toggle off to suspend sign-in</div></div><label class="switch"><input type="checkbox" id="edit-uActive"><span class="track"></span></label></div>
+            </div>
+            <div class="form-actions"><button class="btn-cancel" data-nav="users-list">Cancel</button><button class="place-btn" id="edit-saveBtn">Save changes <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== ITEM & BATCH LIST ========== -->
+      <div class="view-panel" id="view-items-list">
+        <div class="top-row">
+          <div><h1 class="page-title">Item &amp; batch list</h1><p class="page-sub" style="margin-bottom:0;">Catalog and inbound batches across all branches</p></div>
+          <div class="role-tag">ROLE — ADMIN · INVENTORY</div>
+        </div>
+        <div class="list-toolbar">
+          <div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg><input type="text" id="itemSearch" placeholder="Search by item name, SKU, or batch no..."></div>
+          <div class="segmented"><button class="active" id="segItemsBtn">Items</button><button id="segBatchesBtn">Batches</button></div>
+          <button class="primary-btn" data-nav="item-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Add item</button>
+        </div>
+        <table class="data-table" id="itemsViewTable">
+          <thead><tr><th>Item</th><th>Category</th><th>Unit price</th><th>Total stock</th><th>Batches</th><th style="text-align:right;">Actions</th></tr></thead>
+          <tbody id="itemTableBody"></tbody>
+        </table>
+        <table class="data-table" id="batchesViewTable" style="display:none;">
+          <thead><tr><th>Batch no.</th><th>Item</th><th>Qty</th><th>Branch</th><th>Received</th><th>Status</th></tr></thead>
+          <tbody id="batchTableBody"></tbody>
+        </table>
+        <div class="table-footer"><span id="itemCountLabel">— items</span><span>Showing all results</span></div>
+      </div>
+
+      <!-- ========== ADD ITEM ========== -->
+      <div class="view-panel" id="view-item-add">
+        <div class="top-row">
+          <button class="back-link" data-nav="items-list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to item list</button>
+          <div class="role-tag">ROLE — ADMIN · INVENTORY</div>
+        </div>
+        <h1 class="page-title">Add an item</h1>
+        <p class="page-sub">Add a new product to the catalog. Stock is added afterward through a batch.</p>
+        <div class="form-layout">
+          <div>
+            <div class="panel">
+              <h3>Item details</h3>
+              <div class="field-grid">
+                <div class="field full"><label>Item name <span class="req">*</span></label><input type="text" id="ai-name" placeholder="e.g. Portable AC — 2.5T"><div class="err" id="ai-errName">Enter an item name.</div></div>
+                <div class="field"><label>SKU <span class="req">*</span></label><input type="text" id="ai-sku" placeholder="e.g. AC-25T"></div>
+                <div class="field"><label>Category</label><select id="ai-category"><option>Cooling</option><option>Air Quality</option><option>Parts</option><option>Controls</option></select></div>
+                <div class="field"><label>Unit price (₱) <span class="req">*</span></label><input type="number" id="ai-price" min="0" placeholder="e.g. 24999"></div>
+                <div class="field"><label>Reorder level <span class="req">*</span></label><input type="number" id="ai-reorder" min="0" placeholder="e.g. 40"><div class="hint">Triggers a low-stock flag below this quantity.</div></div>
+                <div class="field full"><label>Description</label><textarea id="ai-desc" placeholder="Short internal note about this item..."></textarea></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="panel preview-card">
+              <div class="preview-box-icon">📦</div>
+              <div class="preview-name" id="ai-pvName">New item</div>
+              <div class="preview-email" id="ai-pvSku">SKU —</div>
+              <div class="preview-meta">
+                <div class="pm-row"><span>Category</span><span id="ai-pvCategory">—</span></div>
+                <div class="pm-row"><span>Unit price</span><span id="ai-pvPrice">—</span></div>
+                <div class="pm-row"><span>Reorder level</span><span id="ai-pvReorder">—</span></div>
+                <div class="pm-row"><span>Starting stock</span><span>0 — add a batch next</span></div>
+              </div>
+            </div>
+            <div class="form-actions"><button class="btn-cancel" data-nav="items-list">Cancel</button><button class="place-btn" id="ai-createBtn" disabled>Create item <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== EDIT ITEM ========== -->
+      <div class="view-panel" id="view-item-edit">
+        <div class="top-row">
+          <button class="back-link" data-nav="items-list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to item list</button>
+          <div class="role-tag">ROLE — ADMIN · INVENTORY</div>
+        </div>
+        <h1 class="page-title">Edit item</h1>
+        <p class="page-sub" id="ei-pageSub">Update catalog details for this item</p>
+        <div class="form-layout">
+          <div>
+            <div class="panel">
+              <h3>Item details</h3>
+              <div class="field-grid">
+                <div class="field full"><label>Item name <span class="req">*</span></label><input type="text" id="ei-name"></div>
+                <div class="field"><label>SKU</label><input type="text" id="ei-sku" disabled style="opacity:0.6;"></div>
+                <div class="field"><label>Category</label><select id="ei-category"><option>Cooling</option><option>Air Quality</option><option>Parts</option><option>Controls</option></select></div>
+                <div class="field"><label>Unit price (₱) <span class="req">*</span></label><input type="number" id="ei-price" min="0"></div>
+                <div class="field"><label>Reorder level <span class="req">*</span></label><input type="number" id="ei-reorder" min="0"></div>
+                <div class="field full"><label>Description</label><textarea id="ei-desc"></textarea></div>
+              </div>
+            </div>
+            <div class="panel">
+              <h3>Batches for this item</h3>
+              <table class="batch-mini-table"><thead><tr><th>Batch no.</th><th>Qty</th><th>Branch</th><th>Received</th></tr></thead><tbody id="ei-batchList"></tbody></table>
+            </div>
+            <div class="danger-zone">
+              <h3>Danger zone</h3>
+              <p>Removing this item deletes it from the catalog. Existing batches remain in history but stop appearing in active stock.</p>
+              <button class="danger-btn" id="ei-openDeleteBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"/></svg>Delete this item</button>
+            </div>
+          </div>
+          <div>
+            <div class="panel preview-card">
+              <div class="preview-box-icon">📦</div>
+              <div class="preview-name" id="ei-pvName">—</div>
+              <div class="preview-email" id="ei-pvSku">—</div>
+              <div class="preview-meta">
+                <div class="pm-row"><span>Category</span><span id="ei-pvCategory">—</span></div>
+                <div class="pm-row"><span>Unit price</span><span id="ei-pvPrice">—</span></div>
+                <div class="pm-row"><span>Reorder level</span><span id="ei-pvReorder">—</span></div>
+                <div class="pm-row"><span>Total stock</span><span id="ei-pvStock">—</span></div>
+              </div>
+            </div>
+            <div class="form-actions"><button class="btn-cancel" data-nav="items-list">Cancel</button><button class="place-btn" id="ei-saveBtn">Save changes <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== ADD BATCH ========== -->
+      <div class="view-panel" id="view-batch-add">
+        <div class="top-row">
+          <button class="back-link" data-nav="items-list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to item list</button>
+          <div class="role-tag">ROLE — ADMIN · INVENTORY</div>
+        </div>
+        <h1 class="page-title">Add a batch</h1>
+        <p class="page-sub">Log a new inbound batch of stock for an existing item</p>
+        <div class="form-layout">
+          <div>
+            <div class="panel">
+              <h3>Batch details</h3>
+              <div class="field-grid">
+                <div class="field full"><label>Item <span class="req">*</span></label><select id="ab-item"><option value="">Select item...</option></select></div>
+                <div class="field"><label>Batch number</label><input type="text" id="ab-batchNo" placeholder="e.g. B-2401"><div class="hint">Leave blank to auto-generate.</div></div>
+                <div class="field"><label>Quantity received <span class="req">*</span></label><input type="number" id="ab-qty" min="1" placeholder="e.g. 200"></div>
+                <div class="field"><label>Branch / warehouse <span class="req">*</span></label><select id="ab-warehouse"><option value="">Select branch...</option><option>Lipa City, Batangas — Main DC</option><option>Cabuyao, Laguna — South Hub</option><option>Quezon City — North Hub</option><option>Davao City — Mindanao Hub</option></select></div>
+                <div class="field"><label>Date received <span class="req">*</span></label><input type="date" id="ab-receivedDate"></div>
+                <div class="field"><label>Expiry / shelf-life date</label><input type="date" id="ab-expiry"><div class="hint">Leave blank for items with no shelf life.</div></div>
+                <div class="field full"><label>Notes</label><textarea id="ab-notes" placeholder="e.g. Supplier delivery reference, condition on arrival..."></textarea></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="panel preview-card">
+              <div class="preview-box-icon">🧾</div>
+              <div class="preview-name" id="ab-pvItem">Select an item</div>
+              <div class="preview-email" id="ab-pvBatchNo">Batch —</div>
+              <div class="preview-meta">
+                <div class="pm-row"><span>Quantity</span><span id="ab-pvQty">—</span></div>
+                <div class="pm-row"><span>Branch</span><span id="ab-pvBranch">Not set</span></div>
+                <div class="pm-row"><span>Received</span><span id="ab-pvReceived">Not set</span></div>
+                <div class="pm-row"><span>New total stock</span><span id="ab-pvNewTotal">—</span></div>
+              </div>
+            </div>
+            <div class="form-actions"><button class="btn-cancel" data-nav="items-list">Cancel</button><button class="place-btn" id="ab-createBtn" disabled>Log batch <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== ACTIVITY LOG ========== -->
+      <div class="view-panel" id="view-activity-log">
+        <div class="top-row">
+          <div><h1 class="page-title">Activity log</h1><p class="page-sub" style="margin-bottom:0;">A running record of changes across users, inventory, and orders</p></div>
+          <div class="role-tag">ROLE — ADMIN · REPORTS</div>
+        </div>
+        <div class="log-filter-tabs" id="logFilterTabs">
+          <button class="active" data-filter="all">All activity</button>
+          <button data-filter="user">Users</button>
+          <button data-filter="inventory">Inventory</button>
+          <button data-filter="order">Orders</button>
+          <button data-filter="audit">Audits</button>
+        </div>
+        <div class="panel" style="padding:6px 22px;">
+          <div id="logList"></div>
+        </div>
+      </div>
+
+      <!-- ========== AUDIT SUMMARY ========== -->
+      <div class="view-panel" id="view-audit-summary">
+        <div class="top-row">
+          <div><h1 class="page-title">Audit summary</h1><p class="page-sub" style="margin-bottom:0;">Results from the most recent stock count, compared against system records</p></div>
+          <div class="role-tag">ROLE — ADMIN · REPORTS</div>
+        </div>
+        <div class="audit-stats-row">
+          <div class="audit-stat"><div class="as-label">Last audit date</div><div class="as-value" style="font-size:16px;">July 28, 2026</div><div class="as-sub">Lipa City — Main DC</div></div>
+          <div class="audit-stat"><div class="as-label">Items audited</div><div class="as-value">5</div><div class="as-sub">Out of 5 catalog items</div></div>
+          <div class="audit-stat"><div class="as-label">Discrepancies found</div><div class="as-value neg">3</div><div class="as-sub">Across 2 categories</div></div>
+          <div class="audit-stat"><div class="as-label">Total variance value</div><div class="as-value neg">−₱40,750</div><div class="as-sub">Net shrinkage vs. system count</div></div>
+        </div>
+        <div class="panel">
+          <h3>Discrepancies by item</h3>
+          <p class="panel-sub">Expected quantity is what the system recorded; actual is the physical count taken during the audit.</p>
+          <table class="data-table">
+            <thead><tr><th>Item</th><th>Expected</th><th>Actual</th><th>Variance</th><th>Value impact</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>Smart Thermostat — V2</td><td>15</td><td>12</td><td class="variance-cell neg">−3</td><td class="variance-cell neg">−₱25,500</td><td><span class="chip status-critical">Investigate</span></td></tr>
+              <tr><td>Air Purifier — Compact</td><td>60</td><td>58</td><td class="variance-cell neg">−2</td><td class="variance-cell neg">−₱12,400</td><td><span class="chip status-low">Flagged</span></td></tr>
+              <tr><td>Carbon Filter — Standard</td><td>345</td><td>340</td><td class="variance-cell neg">−5</td><td class="variance-cell neg">−₱3,250</td><td><span class="chip status-low">Flagged</span></td></tr>
+              <tr><td>Portable AC — 1.5T</td><td>910</td><td>910</td><td class="variance-cell zero">0</td><td class="variance-cell zero">₱0</td><td><span class="chip status-fresh">Matched</span></td></tr>
+              <tr><td>Portable AC — 2.0T</td><td>620</td><td>620</td><td class="variance-cell zero">0</td><td class="variance-cell zero">₱0</td><td><span class="chip status-fresh">Matched</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ================= DELETE CONFIRM MODAL ================= -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal-box">
+    <div class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg></div>
+    <h3 id="deleteModalTitle">Delete this user?</h3>
+    <p id="deleteModalBody">This will permanently remove <b>—</b> and revoke their access. This can't be undone.</p>
+    <div class="modal-actions">
+      <button class="modal-cancel" id="deleteModalCancel">Cancel</button>
+      <button class="modal-confirm" id="deleteModalConfirm">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg><span id="toastMsg"></span></div>
+
+<script>
+/* ============================= DATA ============================= */
+let users = [
+  {id:1, empId:'WB-EMP-101', name:'Jomari Cruz', email:'jomari.cruz@wb.ph', phone:'0917 200 1101', role:'Admin', branch:'Lipa City, Batangas — Main DC', active:true, perms:{orders:true,picking:true,receiving:true,inventory:true,users:true}},
+  {id:2, empId:'WB-EMP-102', name:'Andrea Santos', email:'andrea.santos@wb.ph', phone:'0917 200 1102', role:'Staff', branch:'Cabuyao, Laguna — South Hub', active:true, perms:{orders:true,picking:false,receiving:false,inventory:false,users:false}},
+  {id:3, empId:'WB-EMP-103', name:'Ronnel Dizon', email:'ronnel.dizon@wb.ph', phone:'0917 200 1103', role:'Picking', branch:'Lipa City, Batangas — Main DC', active:true, perms:{orders:false,picking:true,receiving:false,inventory:false,users:false}},
+  {id:4, empId:'WB-EMP-104', name:'Katrina Reyes', email:'katrina.reyes@wb.ph', phone:'0917 200 1104', role:'Receiving', branch:'Quezon City — North Hub', active:false, perms:{orders:false,picking:false,receiving:true,inventory:true,users:false}},
+  {id:5, empId:'WB-EMP-105', name:'Mark Villanueva', email:'mark.villanueva@wb.ph', phone:'0917 200 1105', role:'Staff', branch:'Davao City — Mindanao Hub', active:true, perms:{orders:true,picking:false,receiving:false,inventory:false,users:false}},
+];
+let userIdCounter = 106;
+
+let items = [
+  {id:1, name:'Portable AC — 1.5T', sku:'AC-15T', category:'Cooling', price:24999, reorder:50, desc:'Standard portable unit, 1.5-ton cooling capacity.'},
+  {id:2, name:'Portable AC — 2.0T', sku:'AC-20T', category:'Cooling', price:29999, reorder:40, desc:'Higher-capacity unit for larger rooms.'},
+  {id:3, name:'Air Purifier — Compact', sku:'AP-CMP', category:'Air Quality', price:6200, reorder:30, desc:'Compact HEPA purifier for small spaces.'},
+  {id:4, name:'Carbon Filter — Standard', sku:'CF-STD', category:'Parts', price:650, reorder:100, desc:'Replacement carbon filter, standard size.'},
+  {id:5, name:'Smart Thermostat — V2', sku:'TH-V2', category:'Controls', price:8500, reorder:20, desc:'Wi-Fi enabled thermostat, second generation.'},
+];
+let itemIdCounter = 6;
+
+let batches = [
+  {id:1, itemId:1, batchNo:'B-2301', qty:500, branch:'Lipa City, Batangas — Main DC', received:'2026-05-10', expiry:''},
+  {id:2, itemId:1, batchNo:'B-2302', qty:410, branch:'Cabuyao, Laguna — South Hub', received:'2026-06-20', expiry:''},
+  {id:3, itemId:2, batchNo:'B-2298', qty:620, branch:'Lipa City, Batangas — Main DC', received:'2026-04-02', expiry:''},
+  {id:4, itemId:3, batchNo:'B-2310', qty:58, branch:'Quezon City — North Hub', received:'2026-07-01', expiry:''},
+  {id:5, itemId:4, batchNo:'B-2280', qty:200, branch:'Lipa City, Batangas — Main DC', received:'2026-03-15', expiry:'2027-03-15'},
+  {id:6, itemId:4, batchNo:'B-2315', qty:140, branch:'Cabuyao, Laguna — South Hub', received:'2026-07-20', expiry:'2027-07-20'},
+  {id:7, itemId:5, batchNo:'B-2270', qty:12, branch:'Davao City — Mindanao Hub', received:'2026-02-10', expiry:''},
+];
+let batchIdCounter = 8;
+
+const activityLog = [
+  {type:'user', icon:'👤', title:'<b>Jomari Cruz</b> added user <b>Mark Villanueva</b>', meta:'Role: Staff · Davao Mindanao Hub', time:'Aug 2, 2026 — 4:12 PM'},
+  {type:'inventory', icon:'📦', title:'<b>Katrina Reyes</b> logged batch <b>B-2315</b> for Carbon Filter — Standard', meta:'140 units · Cabuyao South Hub', time:'Jul 20, 2026 — 11:03 AM'},
+  {type:'audit', icon:'🔎', title:'<b>Jomari Cruz</b> completed a stock audit', meta:'5 items audited · 3 discrepancies found', time:'Jul 28, 2026 — 9:40 AM'},
+  {type:'order', icon:'🧾', title:'<b>Andrea Santos</b> placed order <b>WB-1042</b>', meta:'3 line items · ₱61,850 total', time:'Jul 26, 2026 — 2:55 PM'},
+  {type:'user', icon:'👤', title:'<b>Jomari Cruz</b> suspended <b>Katrina Reyes</b>', meta:'Account set to inactive', time:'Jul 22, 2026 — 5:30 PM'},
+  {type:'inventory', icon:'📦', title:'<b>Ronnel Dizon</b> flagged low stock on Smart Thermostat — V2', meta:'12 units remaining · reorder level 20', time:'Jul 18, 2026 — 8:15 AM'},
+  {type:'order', icon:'🧾', title:'<b>Mark Villanueva</b> placed order <b>WB-1038</b>', meta:'1 line item · ₱8,500 total', time:'Jul 15, 2026 — 1:20 PM'},
+  {type:'inventory', icon:'📦', title:'<b>Jomari Cruz</b> updated pricing on Air Purifier — Compact', meta:'₱5,900 → ₱6,200', time:'Jul 10, 2026 — 10:47 AM'},
+  {type:'user', icon:'👤', title:'<b>Jomari Cruz</b> added user <b>Katrina Reyes</b>', meta:'Role: Receiving · QC North Hub', time:'Jun 30, 2026 — 3:02 PM'},
+  {type:'audit', icon:'🔎', title:'<b>Jomari Cruz</b> completed a stock audit', meta:'5 items audited · 1 discrepancy found', time:'Jun 15, 2026 — 9:10 AM'},
+];
+
+const branchOptions = ['Lipa City, Batangas — Main DC','Cabuyao, Laguna — South Hub','Quezon City — North Hub','Davao City — Mindanao Hub'];
+const rolePermissionMap = {
+  Admin:      {orders:true,  picking:true,  receiving:true,  inventory:true,  users:true},
+  Staff:      {orders:true,  picking:false, receiving:false, inventory:false, users:false},
+  Picking:    {orders:false, picking:true,  receiving:false, inventory:false, users:false},
+  Receiving:  {orders:false, picking:false, receiving:true,  inventory:true,  users:false},
+};
+const permissionDefs = [
+  {key:'orders', name:'Orders', desc:'Create and manage customer orders'},
+  {key:'picking', name:'Picking', desc:'View and fulfill picking lists'},
+  {key:'receiving', name:'Receiving', desc:'Log incoming stock and deliveries'},
+  {key:'inventory', name:'Inventory', desc:'Adjust stock counts and levels'},
+  {key:'users', name:'User management', desc:'Add, edit, and remove team members'},
+];
+
+let addRole = 'Staff', addSetupMethod = 'invite';
+let editUserId = null, editRole = null;
+let editItemId = null;
+let deleteTarget = null; // {type:'user'|'item', id, name}
+
+/* ============================= HELPERS ============================= */
+function fmtPeso(n){ return '₱' + Number(n).toLocaleString(); }
+function initials(name){ const p = name.trim().split(/\s+/).filter(Boolean); if(!p.length) return '—'; return p.length===1? p[0].slice(0,2).toUpperCase() : (p[0][0]+p[p.length-1][0]).toUpperCase(); }
+function isValidEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+function itemStock(itemId){ return batches.filter(b=>b.itemId===itemId).reduce((s,b)=>s+b.qty,0); }
+function itemBatchCount(itemId){ return batches.filter(b=>b.itemId===itemId).length; }
+function batchStatus(b, item){ if(item.reorder && b.qty < item.reorder/2) return {label:'Low', cls:'status-low'}; return {label:'Fresh', cls:'status-fresh'}; }
+
+const toast = document.getElementById('toast'), toastMsg = document.getElementById('toastMsg');
+function showToast(msg){ toastMsg.textContent = msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), 2400); }
+
+/* ============================= NAV ============================= */
+function showView(id){
+  document.querySelectorAll('.view-panel').forEach(v=>v.classList.remove('show'));
+  document.getElementById('view-'+id).classList.add('show');
+  document.querySelectorAll('.side-btn').forEach(b=>b.classList.remove('active'));
+  const navMap = {'user-edit':'users-list', 'item-edit':'items-list'};
+  const activeId = navMap[id] || id;
+  const btn = document.querySelector(`.side-btn[data-nav="${activeId}"]`);
+  if (btn) btn.classList.add('active');
+  window.scrollTo({top:0, behavior:'instant'});
+}
+document.querySelectorAll('[data-nav]').forEach(el=>{
+  el.addEventListener('click', ()=> showView(el.dataset.nav));
+});
+
+/* ============================= USER LIST ============================= */
+function renderUserList(){
+  const q = document.getElementById('userSearch').value.trim().toLowerCase();
+  const roleFilter = document.getElementById('userRoleFilter').value;
+  const filtered = users.filter(u=>{
+    const matchesQ = !q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.empId.toLowerCase().includes(q);
+    const matchesRole = !roleFilter || u.role === roleFilter;
+    return matchesQ && matchesRole;
+  });
+  const body = document.getElementById('userTableBody');
+  if (filtered.length === 0){
+    body.innerHTML = '<tr class="empty-row"><td colspan="5">No users match your search.</td></tr>';
+  } else {
+    body.innerHTML = filtered.map(u => `
+      <tr>
+        <td><div class="name-cell"><div class="mini-avatar">${initials(u.name)}</div><div><div class="nm">${u.name}</div><div class="sub">${u.email}</div></div></div></td>
+        <td><span class="chip role-${u.role}">${u.role}</span></td>
+        <td>${u.branch}</td>
+        <td><span class="chip ${u.active?'status-active':'status-inactive'}">${u.active?'Active':'Inactive'}</span></td>
+        <td><div class="row-actions">
+          <button class="icon-btn" onclick="openEditUser(${u.id})" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="icon-btn danger" onclick="openDeleteUser(${u.id})" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"/></svg></button>
+        </div></td>
+      </tr>`).join('');
+  }
+  document.getElementById('userCountLabel').textContent = `${filtered.length} user${filtered.length===1?'':'s'}`;
+}
+document.getElementById('userSearch').addEventListener('input', renderUserList);
+document.getElementById('userRoleFilter').addEventListener('change', renderUserList);
+
+/* ============================= ADD USER FORM ============================= */
+function renderPerms(containerId, role, custom){
+  const state = custom || rolePermissionMap[role];
+  document.getElementById(containerId).innerHTML = permissionDefs.map(p => `
+    <div class="perm-row">
+      <div class="perm-info"><div class="pn">${p.name}</div><div class="pd">${p.desc}</div></div>
+      <label class="switch"><input type="checkbox" data-key="${p.key}" ${state[p.key] ? 'checked' : ''}><span class="track"></span></label>
+    </div>`).join('');
+}
+function readPerms(containerId){
+  const out = {};
+  document.querySelectorAll(`#${containerId} input[type=checkbox]`).forEach(cb => out[cb.dataset.key] = cb.checked);
+  return out;
+}
+
+function addUpdatePreview(){
+  const name = document.getElementById('add-uName').value.trim();
+  const email = document.getElementById('add-uEmail').value.trim();
+  const phone = document.getElementById('add-uPhone').value.trim();
+  const empId = document.getElementById('add-uEmpId').value.trim();
+  const branch = document.getElementById('add-uWarehouse').value;
+  document.getElementById('add-pvName').textContent = name || 'New user';
+  document.getElementById('add-pvEmail').textContent = email || '—';
+  document.getElementById('add-pvAvatar').textContent = name ? initials(name) : '—';
+  document.getElementById('add-pvRoleChip').textContent = addRole.toUpperCase();
+  document.getElementById('add-pvBranch').textContent = branch || 'Not set';
+  document.getElementById('add-pvEmpId').textContent = empId || 'Auto-assigned';
+  document.getElementById('add-pvPhone').textContent = phone || 'Not set';
+  addValidate();
+}
+function addValidate(){
+  const name = document.getElementById('add-uName').value.trim();
+  const email = document.getElementById('add-uEmail').value.trim();
+  const branch = document.getElementById('add-uWarehouse').value;
+  const pw = document.getElementById('add-uTempPw').value;
+  const ok = name && isValidEmail(email) && branch && (addSetupMethod==='invite' || pw.length>=6);
+  document.getElementById('add-createBtn').disabled = !ok;
+}
+['add-uName','add-uPhone','add-uEmpId'].forEach(id=>document.getElementById(id).addEventListener('input', addUpdatePreview));
+document.getElementById('add-uEmail').addEventListener('input', ()=>{
+  const email = document.getElementById('add-uEmail').value.trim();
+  const invalid = email.length>0 && !isValidEmail(email);
+  document.getElementById('add-uEmail').classList.toggle('invalid', invalid);
+  document.getElementById('add-errEmail').classList.toggle('show', invalid);
+  addUpdatePreview();
+});
+document.getElementById('add-uWarehouse').addEventListener('change', addUpdatePreview);
+document.getElementById('add-uTempPw').addEventListener('input', ()=>{
+  const v = document.getElementById('add-uTempPw').value;
+  const segs = ['add-pwSeg1','add-pwSeg2','add-pwSeg3'].map(id=>document.getElementById(id));
+  segs.forEach(s=>s.className='seg');
+  if (v.length>=1) segs[0].className='seg weak';
+  if (v.length>=6) { segs[0].className=segs[1].className='seg ok'; }
+  if (v.length>=10 && /[0-9]/.test(v) && /[A-Z]/.test(v)) segs.forEach(s=>s.className='seg strong');
+  addValidate();
+});
+document.querySelectorAll('#add-roleCards .role-card').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    document.querySelectorAll('#add-roleCards .role-card').forEach(c=>c.classList.remove('selected'));
+    card.classList.add('selected');
+    addRole = card.dataset.role;
+    renderPerms('add-permList', addRole);
+    addUpdatePreview();
+  });
+});
+document.getElementById('add-setupInviteBtn').addEventListener('click', ()=>{
+  addSetupMethod='invite';
+  document.getElementById('add-setupInviteBtn').classList.add('active');
+  document.getElementById('add-setupPwBtn').classList.remove('active');
+  document.getElementById('add-inviteInfo').style.display='block';
+  document.getElementById('add-pwInfo').style.display='none';
+  addValidate();
+});
+document.getElementById('add-setupPwBtn').addEventListener('click', ()=>{
+  addSetupMethod='password';
+  document.getElementById('add-setupPwBtn').classList.add('active');
+  document.getElementById('add-setupInviteBtn').classList.remove('active');
+  document.getElementById('add-pwInfo').style.display='block';
+  document.getElementById('add-inviteInfo').style.display='none';
+  addValidate();
+});
+document.getElementById('add-createBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('add-uName').value.trim();
+  const email = document.getElementById('add-uEmail').value.trim();
+  const phone = document.getElementById('add-uPhone').value.trim();
+  const empIdInput = document.getElementById('add-uEmpId').value.trim();
+  const empId = empIdInput || ('WB-EMP-' + userIdCounter);
+  const branch = document.getElementById('add-uWarehouse').value;
+  const active = document.getElementById('add-uActive').checked;
+  const perms = readPerms('add-permList');
+  users.push({id:userIdCounter, empId, name, email, phone, role:addRole, branch, active, perms});
+  activityLog.unshift({type:'user', icon:'👤', title:`<b>Jomari Cruz</b> added user <b>${name}</b>`, meta:`Role: ${addRole} · ${branch}`, time:'Just now'});
+  userIdCounter++;
+  showToast(`${name} was added.`);
+  resetAddUserForm();
+  renderUserList();
+  showView('users-list');
+});
+function resetAddUserForm(){
+  ['add-uName','add-uEmail','add-uPhone','add-uEmpId','add-uTempPw'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('add-uWarehouse').value='';
+  document.getElementById('add-uActive').checked = true;
+  document.querySelectorAll('#add-roleCards .role-card').forEach(c=>c.classList.remove('selected'));
+  document.querySelector('#add-roleCards .role-card[data-role="Staff"]').classList.add('selected');
+  addRole='Staff';
+  document.getElementById('add-setupInviteBtn').click();
+  renderPerms('add-permList','Staff');
+  addUpdatePreview();
+}
+
+/* ============================= EDIT USER FORM ============================= */
+function openEditUser(id){
+  const u = users.find(x=>x.id===id);
+  if (!u) return;
+  editUserId = id; editRole = u.role;
+  document.getElementById('edit-pageSub').textContent = `Update account details for ${u.name}`;
+  document.getElementById('edit-uName').value = u.name;
+  document.getElementById('edit-uEmpId').value = u.empId;
+  document.getElementById('edit-uEmail').value = u.email;
+  document.getElementById('edit-uPhone').value = u.phone;
+  document.getElementById('edit-uWarehouse').value = u.branch;
+  document.getElementById('edit-uActive').checked = u.active;
+  document.querySelectorAll('#edit-roleCards .role-card').forEach(c=>c.classList.toggle('selected', c.dataset.role===u.role));
+  renderPerms('edit-permList', null, u.perms);
+  editUpdatePreview();
+  showView('user-edit');
+}
+function editUpdatePreview(){
+  const name = document.getElementById('edit-uName').value.trim();
+  const email = document.getElementById('edit-uEmail').value.trim();
+  const phone = document.getElementById('edit-uPhone').value.trim();
+  const empId = document.getElementById('edit-uEmpId').value.trim();
+  const branch = document.getElementById('edit-uWarehouse').value;
+  document.getElementById('edit-pvName').textContent = name || '—';
+  document.getElementById('edit-pvEmail').textContent = email || '—';
+  document.getElementById('edit-pvAvatar').textContent = name ? initials(name) : '—';
+  document.getElementById('edit-pvRoleChip').textContent = editRole ? editRole.toUpperCase() : '—';
+  document.getElementById('edit-pvBranch').textContent = branch || '—';
+  document.getElementById('edit-pvEmpId').textContent = empId || '—';
+  document.getElementById('edit-pvPhone').textContent = phone || '—';
+}
+['edit-uName','edit-uPhone'].forEach(id=>document.getElementById(id).addEventListener('input', editUpdatePreview));
+document.getElementById('edit-uEmail').addEventListener('input', ()=>{
+  const email = document.getElementById('edit-uEmail').value.trim();
+  const invalid = email.length>0 && !isValidEmail(email);
+  document.getElementById('edit-uEmail').classList.toggle('invalid', invalid);
+  document.getElementById('edit-errEmail').classList.toggle('show', invalid);
+  editUpdatePreview();
+});
+document.getElementById('edit-uWarehouse').addEventListener('change', editUpdatePreview);
+document.querySelectorAll('#edit-roleCards .role-card').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    document.querySelectorAll('#edit-roleCards .role-card').forEach(c=>c.classList.remove('selected'));
+    card.classList.add('selected');
+    editRole = card.dataset.role;
+    renderPerms('edit-permList', editRole);
+    editUpdatePreview();
+  });
+});
+document.getElementById('edit-saveBtn').addEventListener('click', ()=>{
+  const u = users.find(x=>x.id===editUserId);
+  if (!u) return;
+  u.name = document.getElementById('edit-uName').value.trim() || u.name;
+  u.email = document.getElementById('edit-uEmail').value.trim();
+  u.phone = document.getElementById('edit-uPhone').value.trim();
+  u.branch = document.getElementById('edit-uWarehouse').value;
+  u.active = document.getElementById('edit-uActive').checked;
+  u.role = editRole;
+  u.perms = readPerms('edit-permList');
+  activityLog.unshift({type:'user', icon:'👤', title:`<b>Jomari Cruz</b> updated <b>${u.name}</b>`, meta:`Role: ${u.role} · ${u.active?'Active':'Inactive'}`, time:'Just now'});
+  showToast(`${u.name}'s account was updated.`);
+  renderUserList();
+  showView('users-list');
+});
+document.getElementById('edit-openDeleteBtn').addEventListener('click', ()=>{
+  const u = users.find(x=>x.id===editUserId);
+  if (u) openDeleteUser(u.id);
+});
+
+/* ============================= DELETE USER/ITEM ============================= */
+function openDeleteUser(id){
+  const u = users.find(x=>x.id===id);
+  if (!u) return;
+  deleteTarget = {type:'user', id, name:u.name};
+  document.getElementById('deleteModalTitle').textContent = 'Delete this user?';
+  document.getElementById('deleteModalBody').innerHTML = `This will permanently remove <b>${u.name}</b> and revoke their access. This can't be undone.`;
+  document.getElementById('deleteModal').classList.add('show');
+}
+function openDeleteItem(id){
+  const it = items.find(x=>x.id===id);
+  if (!it) return;
+  deleteTarget = {type:'item', id, name:it.name};
+  document.getElementById('deleteModalTitle').textContent = 'Delete this item?';
+  document.getElementById('deleteModalBody').innerHTML = `This will remove <b>${it.name}</b> from the catalog. Existing batches stay in history. This can't be undone.`;
+  document.getElementById('deleteModal').classList.add('show');
+}
+document.getElementById('deleteModalCancel').addEventListener('click', ()=>{
+  document.getElementById('deleteModal').classList.remove('show');
+  deleteTarget = null;
+});
+document.getElementById('deleteModalConfirm').addEventListener('click', ()=>{
+  if (!deleteTarget) return;
+  if (deleteTarget.type === 'user'){
+    users = users.filter(u=>u.id!==deleteTarget.id);
+    activityLog.unshift({type:'user', icon:'👤', title:`<b>Jomari Cruz</b> deleted user <b>${deleteTarget.name}</b>`, meta:'Access revoked', time:'Just now'});
+    renderUserList();
+    showToast(`${deleteTarget.name} was deleted.`);
+    showView('users-list');
+  } else {
+    items = items.filter(i=>i.id!==deleteTarget.id);
+    batches = batches.filter(b=>b.itemId!==deleteTarget.id);
+    activityLog.unshift({type:'inventory', icon:'📦', title:`<b>Jomari Cruz</b> deleted item <b>${deleteTarget.name}</b>`, meta:'Removed from catalog', time:'Just now'});
+    renderItemList(); renderBatchList();
+    showToast(`${deleteTarget.name} was deleted.`);
+    showView('items-list');
+  }
+  document.getElementById('deleteModal').classList.remove('show');
+  deleteTarget = null;
+});
+
+/* ============================= ITEM & BATCH LIST ============================= */
+function renderItemList(){
+  const q = document.getElementById('itemSearch').value.trim().toLowerCase();
+  const filtered = items.filter(it => !q || it.name.toLowerCase().includes(q) || it.sku.toLowerCase().includes(q));
+  const body = document.getElementById('itemTableBody');
+  if (filtered.length===0){
+    body.innerHTML = '<tr class="empty-row"><td colspan="6">No items match your search.</td></tr>';
+  } else {
+    body.innerHTML = filtered.map(it=>{
+      const stock = itemStock(it.id);
+      const low = stock < it.reorder;
+      return `<tr>
+        <td><div class="name-cell"><div class="mini-avatar" style="background:rgba(63,199,184,0.15); color:var(--accent-cool-dim);">${it.sku.slice(0,2)}</div><div><div class="nm">${it.name}</div><div class="sub">${it.sku}</div></div></div></td>
+        <td>${it.category}</td>
+        <td>${fmtPeso(it.price)}</td>
+        <td>${stock.toLocaleString()} ${low?'<span class="chip status-low" style="margin-left:6px;">Low</span>':''}</td>
+        <td>${itemBatchCount(it.id)}</td>
+        <td><div class="row-actions">
+          <button class="icon-btn" onclick="openEditItem(${it.id})" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="icon-btn danger" onclick="openDeleteItem(${it.id})" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"/></svg></button>
+        </div></td>
+      </tr>`;
+    }).join('');
+  }
+  document.getElementById('itemCountLabel').textContent = `${filtered.length} item${filtered.length===1?'':'s'}`;
+}
+function renderBatchList(){
+  const q = document.getElementById('itemSearch').value.trim().toLowerCase();
+  const filtered = batches.filter(b=>{
+    const it = items.find(i=>i.id===b.itemId);
+    return !q || b.batchNo.toLowerCase().includes(q) || (it && it.name.toLowerCase().includes(q));
+  });
+  const body = document.getElementById('batchTableBody');
+  if (filtered.length===0){
+    body.innerHTML = '<tr class="empty-row"><td colspan="6">No batches match your search.</td></tr>';
+    return;
+  }
+  body.innerHTML = filtered.map(b=>{
+    const it = items.find(i=>i.id===b.itemId) || {name:'Unknown item', reorder:0};
+    const st = batchStatus(b, it);
+    return `<tr>
+      <td>${b.batchNo}</td>
+      <td>${it.name}</td>
+      <td>${b.qty.toLocaleString()}</td>
+      <td>${b.branch}</td>
+      <td>${b.received}</td>
+      <td><span class="chip ${st.cls}">${st.label}</span></td>
+    </tr>`;
+  }).join('');
+}
+document.getElementById('itemSearch').addEventListener('input', ()=>{ renderItemList(); renderBatchList(); });
+document.getElementById('segItemsBtn').addEventListener('click', ()=>{
+  document.getElementById('segItemsBtn').classList.add('active');
+  document.getElementById('segBatchesBtn').classList.remove('active');
+  document.getElementById('itemsViewTable').style.display='';
+  document.getElementById('batchesViewTable').style.display='none';
+});
+document.getElementById('segBatchesBtn').addEventListener('click', ()=>{
+  document.getElementById('segBatchesBtn').classList.add('active');
+  document.getElementById('segItemsBtn').classList.remove('active');
+  document.getElementById('batchesViewTable').style.display='';
+  document.getElementById('itemsViewTable').style.display='none';
+});
+
+/* ============================= ADD ITEM FORM ============================= */
+function aiUpdatePreview(){
+  const name = document.getElementById('ai-name').value.trim();
+  const sku = document.getElementById('ai-sku').value.trim();
+  const category = document.getElementById('ai-category').value;
+  const price = document.getElementById('ai-price').value;
+  const reorder = document.getElementById('ai-reorder').value;
+  document.getElementById('ai-pvName').textContent = name || 'New item';
+  document.getElementById('ai-pvSku').textContent = 'SKU ' + (sku || '—');
+  document.getElementById('ai-pvCategory').textContent = category;
+  document.getElementById('ai-pvPrice').textContent = price ? fmtPeso(price) : '—';
+  document.getElementById('ai-pvReorder').textContent = reorder || '—';
+  const ok = name && sku && price && reorder;
+  document.getElementById('ai-createBtn').disabled = !ok;
+}
+['ai-name','ai-sku','ai-category','ai-price','ai-reorder'].forEach(id=>document.getElementById(id).addEventListener('input', aiUpdatePreview));
+document.getElementById('ai-category').addEventListener('change', aiUpdatePreview);
+document.getElementById('ai-createBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('ai-name').value.trim();
+  const sku = document.getElementById('ai-sku').value.trim();
+  const category = document.getElementById('ai-category').value;
+  const price = Number(document.getElementById('ai-price').value);
+  const reorder = Number(document.getElementById('ai-reorder').value);
+  const desc = document.getElementById('ai-desc').value.trim();
+  items.push({id:itemIdCounter, name, sku, category, price, reorder, desc});
+  activityLog.unshift({type:'inventory', icon:'📦', title:`<b>Jomari Cruz</b> added item <b>${name}</b>`, meta:`${category} · ${fmtPeso(price)}`, time:'Just now'});
+  itemIdCounter++;
+  showToast(`${name} was added to the catalog.`);
+  ['ai-name','ai-sku','ai-price','ai-reorder','ai-desc'].forEach(id=>document.getElementById(id).value='');
+  aiUpdatePreview();
+  renderItemList(); populateBatchItemSelect();
+  showView('items-list');
+});
+
+/* ============================= EDIT ITEM FORM ============================= */
+function openEditItem(id){
+  const it = items.find(x=>x.id===id);
+  if (!it) return;
+  editItemId = id;
+  document.getElementById('ei-pageSub').textContent = `Update catalog details for ${it.name}`;
+  document.getElementById('ei-name').value = it.name;
+  document.getElementById('ei-sku').value = it.sku;
+  document.getElementById('ei-category').value = it.category;
+  document.getElementById('ei-price').value = it.price;
+  document.getElementById('ei-reorder').value = it.reorder;
+  document.getElementById('ei-desc').value = it.desc || '';
+  const itBatches = batches.filter(b=>b.itemId===id);
+  document.getElementById('ei-batchList').innerHTML = itBatches.length ? itBatches.map(b=>`<tr><td>${b.batchNo}</td><td>${b.qty.toLocaleString()}</td><td>${b.branch}</td><td>${b.received}</td></tr>`).join('') : '<tr><td colspan="4" style="color:var(--text-onLight-muted);">No batches logged yet.</td></tr>';
+  eiUpdatePreview();
+  showView('item-edit');
+}
+function eiUpdatePreview(){
+  const name = document.getElementById('ei-name').value.trim();
+  const sku = document.getElementById('ei-sku').value.trim();
+  const category = document.getElementById('ei-category').value;
+  const price = document.getElementById('ei-price').value;
+  const reorder = document.getElementById('ei-reorder').value;
+  document.getElementById('ei-pvName').textContent = name || '—';
+  document.getElementById('ei-pvSku').textContent = 'SKU ' + (sku || '—');
+  document.getElementById('ei-pvCategory').textContent = category;
+  document.getElementById('ei-pvPrice').textContent = price ? fmtPeso(price) : '—';
+  document.getElementById('ei-pvReorder').textContent = reorder || '—';
+  document.getElementById('ei-pvStock').textContent = editItemId ? itemStock(editItemId).toLocaleString() : '—';
+}
+['ei-name','ei-category','ei-price','ei-reorder'].forEach(id=>document.getElementById(id).addEventListener('input', eiUpdatePreview));
+document.getElementById('ei-category').addEventListener('change', eiUpdatePreview);
+document.getElementById('ei-saveBtn').addEventListener('click', ()=>{
+  const it = items.find(x=>x.id===editItemId);
+  if (!it) return;
+  it.name = document.getElementById('ei-name').value.trim() || it.name;
+  it.category = document.getElementById('ei-category').value;
+  it.price = Number(document.getElementById('ei-price').value);
+  it.reorder = Number(document.getElementById('ei-reorder').value);
+  it.desc = document.getElementById('ei-desc').value.trim();
+  activityLog.unshift({type:'inventory', icon:'📦', title:`<b>Jomari Cruz</b> updated item <b>${it.name}</b>`, meta:`${it.category} · ${fmtPeso(it.price)}`, time:'Just now'});
+  showToast(`${it.name} was updated.`);
+  renderItemList(); renderBatchList(); populateBatchItemSelect();
+  showView('items-list');
+});
+document.getElementById('ei-openDeleteBtn').addEventListener('click', ()=>{
+  if (editItemId) openDeleteItem(editItemId);
+});
+
+/* ============================= ADD BATCH FORM ============================= */
+function populateBatchItemSelect(){
+  const sel = document.getElementById('ab-item');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">Select item...</option>' + items.map(it=>`<option value="${it.id}">${it.name} (${it.sku})</option>`).join('');
+  if (current) sel.value = current;
+}
+function abUpdatePreview(){
+  const itemId = document.getElementById('ab-item').value;
+  const it = items.find(i=>i.id===Number(itemId));
+  const qty = Number(document.getElementById('ab-qty').value) || 0;
+  const branch = document.getElementById('ab-warehouse').value;
+  const received = document.getElementById('ab-receivedDate').value;
+  const batchNo = document.getElementById('ab-batchNo').value.trim();
+  document.getElementById('ab-pvItem').textContent = it ? it.name : 'Select an item';
+  document.getElementById('ab-pvBatchNo').textContent = 'Batch ' + (batchNo || '(auto)');
+  document.getElementById('ab-pvQty').textContent = qty ? qty.toLocaleString() : '—';
+  document.getElementById('ab-pvBranch').textContent = branch || 'Not set';
+  document.getElementById('ab-pvReceived').textContent = received || 'Not set';
+  document.getElementById('ab-pvNewTotal').textContent = it ? (itemStock(it.id) + qty).toLocaleString() : '—';
+  const ok = it && qty > 0 && branch && received;
+  document.getElementById('ab-createBtn').disabled = !ok;
+}
+['ab-item','ab-qty','ab-warehouse','ab-receivedDate','ab-batchNo'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', abUpdatePreview);
+  document.getElementById(id).addEventListener('change', abUpdatePreview);
+});
+document.getElementById('ab-createBtn').addEventListener('click', ()=>{
+  const itemId = Number(document.getElementById('ab-item').value);
+  const it = items.find(i=>i.id===itemId);
+  const qty = Number(document.getElementById('ab-qty').value);
+  const branch = document.getElementById('ab-warehouse').value;
+  const received = document.getElementById('ab-receivedDate').value;
+  const expiry = document.getElementById('ab-expiry').value;
+  const batchNoInput = document.getElementById('ab-batchNo').value.trim();
+  const batchNo = batchNoInput || ('B-' + (2300 + batchIdCounter));
+  batches.push({id:batchIdCounter, itemId, batchNo, qty, branch, received, expiry});
+  activityLog.unshift({type:'inventory', icon:'📦', title:`<b>Jomari Cruz</b> logged batch <b>${batchNo}</b> for ${it.name}`, meta:`${qty.toLocaleString()} units · ${branch}`, time:'Just now'});
+  batchIdCounter++;
+  showToast(`Batch ${batchNo} logged for ${it.name}.`);
+  ['ab-batchNo','ab-qty','ab-receivedDate','ab-expiry','ab-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ab-item').value=''; document.getElementById('ab-warehouse').value='';
+  abUpdatePreview();
+  renderItemList(); renderBatchList();
+  showView('items-list');
+});
+
+/* ============================= ACTIVITY LOG ============================= */
+let logFilter = 'all';
+function renderLog(){
+  const list = document.getElementById('logList');
+  const filtered = logFilter==='all' ? activityLog : activityLog.filter(l=>l.type===logFilter);
+  list.innerHTML = filtered.map(l=>`
+    <div class="log-entry">
+      <div class="log-icon type-${l.type}">${l.icon}</div>
+      <div class="log-body"><div class="log-title">${l.title}</div><div class="log-meta">${l.meta}</div></div>
+      <div class="log-time">${l.time}</div>
+    </div>`).join('');
+}
+document.querySelectorAll('#logFilterTabs button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#logFilterTabs button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    logFilter = btn.dataset.filter;
+    renderLog();
+  });
+});
+
+/* ============================= INIT ============================= */
+renderUserList();
+renderItemList();
+renderBatchList();
+populateBatchItemSelect();
+renderPerms('add-permList', 'Staff');
+renderLog();
+document.getElementById('ab-receivedDate').value = '2026-08-03';
+</script>
+
+</body>
+</html>
+

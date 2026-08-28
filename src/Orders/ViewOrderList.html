@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WalangBrownout — Orders</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-deep:#0E1620;
+  --card:#FFFFFF;
+  --accent-cool:#3FC7B8; --accent-cool-dim:#2A9C90;
+  --accent-warm:#F2A65A;
+  --text-onLight:#16212B; --text-onLight-muted:#6B7A88;
+  --border-light:#E1DCD1;
+  --ok:#3FC7B8; --warn:#F2A65A; --crit:#E2695B;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:'Inter',sans-serif; background:#E8E4DB; color:var(--text-onLight); min-height:100vh; padding:32px;}
+button{font-family:inherit; cursor:pointer;}
+
+.frame{background:var(--card); max-width:1160px; margin:0 auto; border-radius:16px; box-shadow:0 20px 50px -18px rgba(20,25,30,0.25); overflow:hidden;}
+
+/* header */
+.app-header{display:flex; align-items:center; gap:20px; padding:16px 28px; border-bottom:1px solid var(--border-light); background:var(--card);}
+.logo-block{display:flex; align-items:center; gap:10px;}
+.logo-mark{width:34px;height:34px;border-radius:8px; background:linear-gradient(135deg,var(--accent-cool),var(--accent-cool-dim)); display:flex;align-items:center;justify-content:center; flex-shrink:0;}
+.logo-mark svg{width:18px;height:18px;}
+.wordmark{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:15px;}
+.wordmark span{color:var(--accent-cool);}
+.header-nav{display:flex; gap:26px; margin-left:8px;}
+.header-nav a{font-size:12.5px; font-weight:500; color:var(--text-onLight-muted); text-decoration:none;}
+.header-nav a.active{color:var(--text-onLight); font-weight:600;}
+.header-search{flex:1; display:flex; justify-content:center;}
+.search-box{display:flex; align-items:center; gap:8px; background:#F6F3EE; border:1px solid var(--border-light); border-radius:9px; padding:9px 14px; width:280px;}
+.search-box svg{width:14px;height:14px; color:var(--text-onLight-muted); flex-shrink:0;}
+.search-box input{border:none; outline:none; background:none; font-size:12.5px; width:100%;}
+.header-right{display:flex; align-items:center; gap:16px;}
+.avatar{width:32px;height:32px;border-radius:50%; background:linear-gradient(135deg,var(--accent-warm),#d98a3a); display:flex;align-items:center;justify-content:center; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:11px; color:#2b1a05;}
+
+.body-pad{padding:26px 28px 34px;}
+.role-tag{display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.06em; color:var(--accent-cool-dim); background:rgba(63,199,184,0.10); border:1px solid rgba(63,199,184,0.3); padding:4px 10px; border-radius:14px; margin-bottom:12px;}
+
+.topline{display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px;}
+h1.page-title{font-family:'Space Grotesk',sans-serif; font-size:21px; font-weight:600; margin:0 0 4px 0;}
+p.page-sub{margin:0; font-size:12.8px; color:var(--text-onLight-muted);}
+.new-order-btn{background:var(--text-onLight); color:#fff; border:none; border-radius:9px; padding:11px 18px; font-weight:600; font-size:12.5px; display:flex; align-items:center; gap:7px;}
+.new-order-btn:hover{background:#000;}
+.new-order-btn svg{width:13px;height:13px;}
+
+/* summary strip */
+.summary-row{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px;}
+.summary-card{border:1px solid var(--border-light); border-radius:12px; padding:16px 18px;}
+.summary-card .icon{width:30px;height:30px;border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:10px;}
+.summary-card .icon svg{width:15px;height:15px;}
+.summary-card.warn .icon{background:rgba(242,166,90,0.16); color:#b3691c;}
+.summary-card.info .icon{background:rgba(120,140,160,0.14); color:var(--text-onLight-muted);}
+.summary-card.cool .icon{background:rgba(63,199,184,0.13); color:var(--accent-cool-dim);}
+.summary-label{font-size:10.5px; color:var(--text-onLight-muted); text-transform:uppercase; letter-spacing:0.05em; font-family:'IBM Plex Mono',monospace;}
+.summary-value{font-family:'Space Grotesk',sans-serif; font-size:23px; font-weight:600; margin-top:3px;}
+
+/* filters */
+.filter-row{display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:16px; flex-wrap:wrap;}
+.tab-row{display:flex; gap:6px;}
+.status-tab{border:1px solid var(--border-light); background:#FBF9F5; border-radius:20px; padding:8px 16px; font-size:12px; font-weight:600; color:var(--text-onLight-muted); display:flex; align-items:center; gap:7px;}
+.status-tab .count{font-family:'IBM Plex Mono',monospace; font-size:10.5px; background:rgba(120,140,160,0.15); padding:1px 6px; border-radius:9px;}
+.status-tab.active{background:var(--text-onLight); color:#fff; border-color:var(--text-onLight);}
+.status-tab.active .count{background:rgba(255,255,255,0.2); color:#fff;}
+.order-search{display:flex; align-items:center; gap:8px; background:#F6F3EE; border:1px solid var(--border-light); border-radius:9px; padding:9px 14px; width:230px;}
+.order-search svg{width:14px;height:14px; color:var(--text-onLight-muted); flex-shrink:0;}
+.order-search input{border:none; outline:none; background:none; font-size:12.5px; width:100%;}
+
+/* table */
+.panel{border:1px solid var(--border-light); border-radius:13px; overflow:hidden;}
+table{width:100%; border-collapse:collapse; font-size:12.8px;}
+th{text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-onLight-muted); font-family:'IBM Plex Mono',monospace; padding:13px 16px; background:#FAF8F4; border-bottom:1px solid var(--border-light);}
+td{padding:14px 16px; border-bottom:1px solid #F0ECE3; vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr.order-row-el{cursor:pointer;}
+tr.order-row-el:hover{background:#FAF8F4;}
+.order-id{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:13px;}
+.order-date{font-size:10.8px; color:var(--text-onLight-muted); font-family:'IBM Plex Mono',monospace; margin-top:2px;}
+.customer-name{font-weight:600; font-size:12.8px;}
+.customer-addr{font-size:10.8px; color:var(--text-onLight-muted); margin-top:2px;}
+.item-preview{font-size:11.5px; color:var(--text-onLight-muted);}
+.badge{display:inline-flex; align-items:center; gap:6px; padding:4px 11px; border-radius:20px; font-size:10.5px; font-weight:600; white-space:nowrap;}
+.badge.pending{background:rgba(242,166,90,0.18); color:#a15f18;}
+.badge.confirmed{background:rgba(120,140,160,0.14); color:var(--text-onLight-muted);}
+.badge.fulfilled{background:rgba(63,199,184,0.13); color:var(--accent-cool-dim);}
+.badge .dot{width:6px;height:6px;border-radius:50%; background:currentColor;}
+.total-cell{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:13px;}
+.chev-btn{background:none; border:none; color:var(--text-onLight-muted);}
+.chev-btn svg{width:16px;height:16px;}
+
+.empty-state{text-align:center; padding:60px 20px; color:var(--text-onLight-muted); font-size:13px;}
+
+/* drawer */
+.drawer-overlay{position:fixed; inset:0; background:rgba(14,22,32,0.45); display:none; align-items:stretch; justify-content:flex-end; z-index:100;}
+.drawer-overlay.show{display:flex;}
+.drawer{background:var(--card); width:400px; max-width:90vw; padding:26px 26px 30px; overflow-y:auto; box-shadow:-14px 0 40px -14px rgba(0,0,0,0.3);}
+.drawer-close{float:right; background:none; border:none; color:var(--text-onLight-muted); padding:4px;}
+.drawer-close svg{width:18px;height:18px;}
+.drawer h3{font-family:'Space Grotesk',sans-serif; font-size:17px; margin:20px 0 4px 0; clear:both;}
+.drawer-status{margin-bottom:18px;}
+.drawer-section-title{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-onLight-muted); font-family:'IBM Plex Mono',monospace; margin:18px 0 10px;}
+.drawer-row{display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid #F0ECE3; font-size:12.8px;}
+.drawer-row span:first-child{color:var(--text-onLight-muted);}
+.drawer-row span:last-child{font-weight:600; text-align:right;}
+.drawer-item{display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid #F0ECE3; font-size:12.5px;}
+.drawer-item .sw{width:30px;height:30px;border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;}
+.drawer-item .n{flex:1; font-weight:600;}
+.drawer-item .q{color:var(--text-onLight-muted);}
+.drawer-actions{display:flex; gap:10px; margin-top:20px;}
+.drawer-actions button{flex:1; border:1px solid var(--border-light); background:var(--card); border-radius:8px; padding:10px; font-weight:600; font-size:12px; color:var(--text-onLight);}
+.drawer-actions button.primary{background:var(--text-onLight); color:#fff; border-color:var(--text-onLight);}
+
+.toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--bg-deep); color:#EAF1F5; padding:11px 18px; border-radius:10px; font-size:12.5px; display:flex; align-items:center; gap:9px; box-shadow:0 12px 32px -10px rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition:.25s; z-index:100;}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+.toast svg{width:15px;height:15px; color:var(--accent-cool); flex-shrink:0;}
+
+@media (max-width:900px){ .summary-row{grid-template-columns:repeat(2,1fr);} .header-nav, .header-search{display:none;} table{font-size:11.5px;} }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="app-header">
+    <div class="logo-block">
+      <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2L4 7v10l8 5 8-5V7l-8-5z" stroke="#04211D" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 9v6M9 12h6" stroke="#04211D" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+      <div class="wordmark">Walang<span>Brownout</span></div>
+    </div>
+    <div class="header-nav">
+      <a>Picking</a>
+      <a>Receiving</a>
+      <a class="active">Orders</a>
+    </div>
+    <div class="header-search">
+      <div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input placeholder="Search products..."></div>
+    </div>
+    <div class="header-right"><div class="avatar">JC</div></div>
+  </div>
+
+  <div class="body-pad">
+    <div class="role-tag">ROLE — STAFF · ORDERS</div>
+
+    <div class="topline">
+      <div>
+        <h1 class="page-title">Orders</h1>
+        <p class="page-sub">Customer orders across every warehouse and status</p>
+      </div>
+      <button class="new-order-btn" id="newOrderBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>New order</button>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-card warn"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><div class="summary-label">Pending</div><div class="summary-value" id="pendingCount">0</div></div>
+      <div class="summary-card info"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h9"/></svg></div><div class="summary-label">Confirmed</div><div class="summary-value" id="confirmedCount">0</div></div>
+      <div class="summary-card cool"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div><div class="summary-label">Fulfilled</div><div class="summary-value" id="fulfilledCount">0</div></div>
+      <div class="summary-card info"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div><div class="summary-label">Total orders</div><div class="summary-value" id="totalCount">0</div></div>
+    </div>
+
+    <div class="filter-row">
+      <div class="tab-row" id="statusTabs">
+        <button class="status-tab active" data-filter="all">All <span class="count" id="tabCountAll">0</span></button>
+        <button class="status-tab" data-filter="Pending">Pending <span class="count" id="tabCountPending">0</span></button>
+        <button class="status-tab" data-filter="Confirmed">Confirmed <span class="count" id="tabCountConfirmed">0</span></button>
+        <button class="status-tab" data-filter="Fulfilled">Fulfilled <span class="count" id="tabCountFulfilled">0</span></button>
+      </div>
+      <div class="order-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="orderSearch" placeholder="Search order # or customer..."></div>
+    </div>
+
+    <div class="panel">
+      <table>
+        <tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th></th></tr>
+        <tbody id="orderRows"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="drawer-overlay" id="drawerOverlay">
+  <div class="drawer">
+    <button class="drawer-close" id="drawerClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    <h3 id="drawerOrderId"></h3>
+    <div class="drawer-status" id="drawerStatusBadge"></div>
+
+    <div class="drawer-section-title">Customer</div>
+    <div class="drawer-row"><span>Name</span><span id="drawerCustomer"></span></div>
+    <div class="drawer-row"><span>Delivery address</span><span id="drawerAddress"></span></div>
+    <div class="drawer-row"><span>Order date</span><span id="drawerDate"></span></div>
+
+    <div class="drawer-section-title">Items</div>
+    <div id="drawerItems"></div>
+
+    <div class="drawer-section-title">Summary</div>
+    <div class="drawer-row"><span>Subtotal</span><span id="drawerSubtotal"></span></div>
+    <div class="drawer-row"><span>Delivery fee</span><span id="drawerDelivery"></span></div>
+    <div class="drawer-row"><span>Total</span><span id="drawerTotal"></span></div>
+
+    <div class="drawer-actions">
+      <button id="drawerAdvanceBtn"></button>
+      <button class="primary" id="drawerPickBtn">Send to picking</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg><span id="toastMsg"></span></div>
+
+<script>
+let orders = [
+  {id:'WB-1042', date:'Aug 2, 2026', customer:'Maria Lopez', addr:'Lipa City, Batangas', status:'Pending',
+    items:[{name:'Smart Thermostat V2', icon:'🌡️', bg:'#EFEAFB', qty:1, price:8500}], delivery:350},
+  {id:'WB-1043', date:'Aug 1, 2026', customer:'Dan Cruz', addr:'San Pablo, Laguna', status:'Confirmed',
+    items:[{name:'Portable AC 1.5T', icon:'❄️', bg:'#E4F5F2', qty:3, price:24999},{name:'Carbon Filter Standard', icon:'🧯', bg:'#FCEFE2', qty:6, price:650}], delivery:500},
+  {id:'WB-1044', date:'Jul 31, 2026', customer:'Grace Tan', addr:'Batangas City', status:'Confirmed',
+    items:[{name:'Air Purifier Compact', icon:'🌬️', bg:'#EAF4FF', qty:2, price:6200}], delivery:300},
+  {id:'WB-1039', date:'Jul 29, 2026', customer:'Paolo Reyes', addr:'Tanauan, Batangas', status:'Fulfilled',
+    items:[{name:'Portable AC 2.0T', icon:'❄️', bg:'#E4F5F2', qty:1, price:29999}], delivery:350},
+  {id:'WB-1035', date:'Jul 27, 2026', customer:'Liza Gomez', addr:'Lipa City, Batangas', status:'Fulfilled',
+    items:[{name:'Smart Thermostat V1', icon:'🌡️', bg:'#EFEAFB', qty:2, price:6800}], delivery:300},
+  {id:'WB-1031', date:'Jul 24, 2026', customer:'Noel Ilagan', addr:'Calamba, Laguna', status:'Fulfilled',
+    items:[{name:'Air Purifier Tower', icon:'🌬️', bg:'#EAF4FF', qty:1, price:9800}], delivery:400},
+];
+
+let activeFilter = 'all';
+let searchTerm = '';
+
+function orderSubtotal(o){ return o.items.reduce((s,it)=>s + it.qty*it.price, 0); }
+function orderTotal(o){ return orderSubtotal(o) + o.delivery; }
+function itemsPreview(o){ return o.items.map(it=>`${it.name} ×${it.qty}`).join(', '); }
+function fmt(n){ return '₱' + n.toLocaleString(); }
+function statusClass(s){ return s.toLowerCase(); }
+
+function updateCounts(){
+  const pending = orders.filter(o=>o.status==='Pending').length;
+  const confirmed = orders.filter(o=>o.status==='Confirmed').length;
+  const fulfilled = orders.filter(o=>o.status==='Fulfilled').length;
+  document.getElementById('pendingCount').textContent = pending;
+  document.getElementById('confirmedCount').textContent = confirmed;
+  document.getElementById('fulfilledCount').textContent = fulfilled;
+  document.getElementById('totalCount').textContent = orders.length;
+  document.getElementById('tabCountAll').textContent = orders.length;
+  document.getElementById('tabCountPending').textContent = pending;
+  document.getElementById('tabCountConfirmed').textContent = confirmed;
+  document.getElementById('tabCountFulfilled').textContent = fulfilled;
+}
+
+function renderOrders(){
+  updateCounts();
+  const tbody = document.getElementById('orderRows');
+  const rows = orders.filter(o => {
+    const matchesFilter = activeFilter==='all' || o.status===activeFilter;
+    const matchesSearch = o.id.toLowerCase().includes(searchTerm) || o.customer.toLowerCase().includes(searchTerm);
+    return matchesFilter && matchesSearch;
+  });
+
+  if (rows.length === 0){
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">No orders match this filter.</div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map(o => {
+    const idx = orders.indexOf(o);
+    return `<tr class="order-row-el" onclick="openDrawer(${idx})">
+      <td><div class="order-id">${o.id}</div><div class="order-date">${o.date}</div></td>
+      <td><div class="customer-name">${o.customer}</div><div class="customer-addr">${o.addr}</div></td>
+      <td><div class="item-preview">${itemsPreview(o)}</div></td>
+      <td><div class="total-cell">${fmt(orderTotal(o))}</div></td>
+      <td><span class="badge ${statusClass(o.status)}"><span class="dot"></span>${o.status}</span></td>
+      <td><button class="chev-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button></td>
+    </tr>`;
+  }).join('');
+}
+renderOrders();
+
+document.querySelectorAll('#statusTabs .status-tab').forEach(tab => tab.addEventListener('click', () => {
+  document.querySelectorAll('#statusTabs .status-tab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  activeFilter = tab.dataset.filter;
+  renderOrders();
+}));
+document.getElementById('orderSearch').addEventListener('input', (e) => { searchTerm = e.target.value.toLowerCase(); renderOrders(); });
+
+const toast = document.getElementById('toast');
+const toastMsg = document.getElementById('toastMsg');
+function showToast(msg){ toastMsg.textContent = msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), 2400); }
+
+let currentDrawerIdx = null;
+function openDrawer(idx){
+  currentDrawerIdx = idx;
+  const o = orders[idx];
+  document.getElementById('drawerOrderId').textContent = 'Order ' + o.id;
+  document.getElementById('drawerStatusBadge').innerHTML = `<span class="badge ${statusClass(o.status)}"><span class="dot"></span>${o.status}</span>`;
+  document.getElementById('drawerCustomer').textContent = o.customer;
+  document.getElementById('drawerAddress').textContent = o.addr;
+  document.getElementById('drawerDate').textContent = o.date;
+  document.getElementById('drawerItems').innerHTML = o.items.map(it => `
+    <div class="drawer-item"><div class="sw" style="background:${it.bg};">${it.icon}</div><div class="n">${it.name}</div><div class="q">×${it.qty}</div></div>`).join('');
+  document.getElementById('drawerSubtotal').textContent = fmt(orderSubtotal(o));
+  document.getElementById('drawerDelivery').textContent = fmt(o.delivery);
+  document.getElementById('drawerTotal').textContent = fmt(orderTotal(o));
+
+  const advanceBtn = document.getElementById('drawerAdvanceBtn');
+  if (o.status === 'Pending'){ advanceBtn.textContent = 'Confirm order'; advanceBtn.disabled=false; }
+  else if (o.status === 'Confirmed'){ advanceBtn.textContent = 'Already confirmed'; advanceBtn.disabled=true; }
+  else { advanceBtn.textContent = 'Fulfilled'; advanceBtn.disabled=true; }
+
+  document.getElementById('drawerOverlay').classList.add('show');
+}
+document.getElementById('drawerClose').addEventListener('click', () => document.getElementById('drawerOverlay').classList.remove('show'));
+document.getElementById('drawerOverlay').addEventListener('click', (e) => { if (e.target.id === 'drawerOverlay') e.currentTarget.classList.remove('show'); });
+
+document.getElementById('drawerAdvanceBtn').addEventListener('click', () => {
+  const o = orders[currentDrawerIdx];
+  if (o.status === 'Pending'){
+    o.status = 'Confirmed';
+    renderOrders();
+    openDrawer(currentDrawerIdx);
+    showToast(`${o.id} confirmed.`);
+  }
+});
+document.getElementById('drawerPickBtn').addEventListener('click', () => {
+  showToast(`Opening pick list for ${orders[currentDrawerIdx].id}...`);
+});
+
+document.getElementById('newOrderBtn').addEventListener('click', () => showToast('Opening new order form...'));
+</script>
+
+</body>
+</html>
+

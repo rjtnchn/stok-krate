@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WalangBrownout — Scan Item</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-deep:#0E1620; --bg-deep-2:#111C28;
+  --card:#FFFFFF;
+  --accent-cool:#3FC7B8; --accent-cool-dim:#2A9C90;
+  --accent-warm:#F2A65A;
+  --text-onDark:#EAF1F5; --text-onDark-muted:#7C93A6;
+  --text-onLight:#16212B; --text-onLight-muted:#6B7A88;
+  --border-light:#E1DCD1;
+  --ok:#3FC7B8; --warn:#F2A65A; --crit:#E2695B;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:'Inter',sans-serif; background:#E8E4DB; color:var(--text-onLight); min-height:100vh; padding:32px;}
+button{font-family:inherit; cursor:pointer;}
+
+.frame{background:var(--card); max-width:1040px; margin:0 auto; border-radius:16px; box-shadow:0 20px 50px -18px rgba(20,25,30,0.25); overflow:hidden;}
+
+/* header */
+.app-header{display:flex; align-items:center; gap:20px; padding:16px 28px; border-bottom:1px solid var(--border-light); background:var(--card);}
+.logo-block{display:flex; align-items:center; gap:10px;}
+.logo-mark{width:34px;height:34px;border-radius:8px; background:linear-gradient(135deg,var(--accent-cool),var(--accent-cool-dim)); display:flex;align-items:center;justify-content:center; flex-shrink:0;}
+.logo-mark svg{width:18px;height:18px;}
+.wordmark{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:15px;}
+.wordmark span{color:var(--accent-cool);}
+.header-nav{display:flex; gap:26px; margin-left:8px;}
+.header-nav a{font-size:12.5px; font-weight:500; color:var(--text-onLight-muted); text-decoration:none;}
+.header-nav a.active{color:var(--text-onLight); font-weight:600;}
+.header-search{flex:1; display:flex; justify-content:center;}
+.search-box{display:flex; align-items:center; gap:8px; background:#F6F3EE; border:1px solid var(--border-light); border-radius:9px; padding:9px 14px; width:280px;}
+.search-box svg{width:14px;height:14px; color:var(--text-onLight-muted); flex-shrink:0;}
+.search-box input{border:none; outline:none; background:none; font-size:12.5px; width:100%;}
+.header-right{display:flex; align-items:center; gap:16px;}
+.avatar{width:32px;height:32px;border-radius:50%; background:linear-gradient(135deg,var(--accent-warm),#d98a3a); display:flex;align-items:center;justify-content:center; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:11px; color:#2b1a05;}
+
+.body-pad{padding:24px 28px 30px;}
+.top-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px;}
+.back-link{display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--text-onLight-muted); background:none; border:none;}
+.back-link svg{width:14px;height:14px;}
+.back-link:hover{color:var(--text-onLight);}
+.order-pill{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-onLight-muted); background:#F6F3EE; border:1px solid var(--border-light); border-radius:20px; padding:6px 13px;}
+
+.progress-track{display:flex; align-items:center; gap:6px; margin-bottom:20px;}
+.seg{flex:1; height:6px; border-radius:4px; background:#EDE8DF;}
+.seg.done{background:var(--accent-cool-dim);}
+.seg.current{background:var(--accent-cool);}
+.progress-label{font-size:11px; color:var(--text-onLight-muted); font-family:'IBM Plex Mono',monospace; white-space:nowrap; margin-left:8px;}
+
+.scan-layout{display:grid; grid-template-columns:1.2fr 1fr; gap:18px;}
+
+/* viewfinder */
+.viewfinder{position:relative; background:radial-gradient(circle at 50% 40%, #1A2734, var(--bg-deep)); border-radius:16px; height:360px; overflow:hidden; display:flex; align-items:center; justify-content:center;}
+.vf-frame{position:relative; width:230px; height:230px;}
+.corner{position:absolute; width:34px; height:34px; border-color:var(--accent-cool);}
+.corner.tl{top:0; left:0; border-top:3px solid; border-left:3px solid; border-radius:8px 0 0 0;}
+.corner.tr{top:0; right:0; border-top:3px solid; border-right:3px solid; border-radius:0 8px 0 0;}
+.corner.bl{bottom:0; left:0; border-bottom:3px solid; border-left:3px solid; border-radius:0 0 0 8px;}
+.corner.br{bottom:0; right:0; border-bottom:3px solid; border-right:3px solid; border-radius:0 0 8px 0;}
+.scan-line{position:absolute; left:6px; right:6px; height:2px; background:linear-gradient(90deg, transparent, #8fe3d8, transparent); box-shadow:0 0 12px 2px rgba(63,199,184,0.7); animation:scanmove 2.2s ease-in-out infinite;}
+@keyframes scanmove{0%{top:8%;} 50%{top:88%;} 100%{top:8%;}}
+.vf-caption{position:absolute; bottom:16px; left:0; right:0; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--text-onDark-muted); letter-spacing:0.05em;}
+.vf-check{display:none; width:80px; height:80px; border-radius:50%; background:rgba(63,199,184,0.15); align-items:center; justify-content:center;}
+.vf-check svg{width:44px;height:44px; color:var(--accent-cool);}
+.viewfinder.scanned .vf-frame{display:none;}
+.viewfinder.scanned .vf-check{display:flex;}
+
+.sim-scan-btn{position:absolute; bottom:16px; right:16px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.25); color:var(--text-onDark); font-size:11px; font-weight:600; padding:8px 14px; border-radius:20px; backdrop-filter:blur(4px);}
+.sim-scan-btn:hover{background:rgba(255,255,255,0.15);}
+
+/* item detail panel */
+.detail-panel{border:1px solid var(--border-light); border-radius:16px; padding:20px 22px; display:flex; flex-direction:column;}
+.detail-top{display:flex; gap:14px; align-items:center; margin-bottom:16px;}
+.detail-swatch{width:56px;height:56px;border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:26px; flex-shrink:0;}
+.detail-name{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:16px;}
+.detail-sku{font-size:11px; color:var(--text-onLight-muted); font-family:'IBM Plex Mono',monospace; margin-top:2px;}
+
+.detail-rows{border-top:1px solid var(--border-light); padding-top:6px;}
+.detail-row{display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid #F0ECE3; font-size:12.5px;}
+.detail-row:last-child{border-bottom:none;}
+.detail-row span:first-child{color:var(--text-onLight-muted);}
+.detail-row span:last-child{font-weight:600;}
+.fefo-note{display:flex; gap:8px; align-items:flex-start; background:rgba(63,199,184,0.08); border:1px solid rgba(63,199,184,0.25); border-radius:9px; padding:10px 12px; font-size:11.5px; color:var(--accent-cool-dim); margin:14px 0;}
+.fefo-note svg{width:14px;height:14px; flex-shrink:0; margin-top:1px;}
+
+.qty-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
+.qty-label{font-size:12px; font-weight:600;}
+.qty-stepper{display:flex; align-items:center; gap:10px;}
+.qty-stepper button{width:30px;height:30px;border-radius:8px; border:1px solid var(--border-light); background:var(--card); font-size:15px; font-weight:600; color:var(--text-onLight);}
+.qty-stepper .val{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:16px; width:24px; text-align:center;}
+
+.confirm-btn{margin-top:auto; background:linear-gradient(135deg,var(--accent-cool),var(--accent-cool-dim)); color:#08201C; border:none; border-radius:10px; padding:13px; font-weight:600; font-size:13.5px; display:flex; align-items:center; justify-content:center; gap:8px;}
+.confirm-btn:disabled{opacity:0.45;}
+.confirm-btn svg{width:15px;height:15px;}
+.confirm-btn.done{background:rgba(63,199,184,0.15); color:var(--accent-cool-dim);}
+
+/* mismatch link */
+.mismatch-link{text-align:center; margin-top:10px; font-size:11px; color:var(--crit); background:none; border:none; font-weight:600;}
+
+.toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--bg-deep); color:#EAF1F5; padding:11px 18px; border-radius:10px; font-size:12.5px; display:flex; align-items:center; gap:9px; box-shadow:0 12px 32px -10px rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition:.25s; z-index:100;}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+.toast svg{width:15px;height:15px; color:var(--accent-cool); flex-shrink:0;}
+
+@media (max-width:760px){ .scan-layout{grid-template-columns:1fr;} .header-nav, .header-search{display:none;} }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="app-header">
+    <div class="logo-block">
+      <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2L4 7v10l8 5 8-5V7l-8-5z" stroke="#04211D" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 9v6M9 12h6" stroke="#04211D" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+      <div class="wordmark">Walang<span>Brownout</span></div>
+    </div>
+    <div class="header-nav">
+      <a class="active">Picking</a>
+      <a>Receiving</a>
+      <a>Orders</a>
+    </div>
+    <div class="header-search">
+      <div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input placeholder="Search products..."></div>
+    </div>
+    <div class="header-right"><div class="avatar">AC</div></div>
+  </div>
+
+  <div class="body-pad">
+    <div class="top-row">
+      <button class="back-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to pick list</button>
+      <div class="order-pill">Order #ORD-123</div>
+    </div>
+
+    <div class="progress-track" id="progressTrack"></div>
+
+    <div class="scan-layout">
+      <div class="viewfinder" id="viewfinder">
+        <div class="vf-frame">
+          <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+          <div class="scan-line" id="scanLine"></div>
+        </div>
+        <div class="vf-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <div class="vf-caption" id="vfCaption">Align barcode within the frame</div>
+        <button class="sim-scan-btn" id="simScanBtn">Simulate scan</button>
+      </div>
+
+      <div class="detail-panel">
+        <div class="detail-top">
+          <div class="detail-swatch" id="detailSwatch"></div>
+          <div>
+            <div class="detail-name" id="detailName"></div>
+            <div class="detail-sku" id="detailSku"></div>
+          </div>
+        </div>
+
+        <div class="detail-rows">
+          <div class="detail-row"><span>Expected lot</span><span id="detailLot"></span></div>
+          <div class="detail-row"><span>Bin location</span><span id="detailBin"></span></div>
+          <div class="detail-row"><span>Warehouse zone</span><span id="detailZone"></span></div>
+        </div>
+
+        <div class="fefo-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>This is the oldest available lot — picking it keeps rotation on FEFO order.</div>
+
+        <div class="qty-row">
+          <span class="qty-label">Quantity to pick</span>
+          <div class="qty-stepper">
+            <button id="qtyMinus">–</button>
+            <span class="val" id="qtyVal">1</span>
+            <button id="qtyPlus">+</button>
+          </div>
+        </div>
+
+        <button class="confirm-btn" id="confirmBtn" disabled>Confirm scan <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <button class="mismatch-link" id="mismatchBtn">⚠ Item doesn't match — report mismatch</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg><span id="toastMsg"></span></div>
+
+<script>
+const queue = [
+  {name:'Smart Thermostat V2', sku:'THM-V2-045', icon:'🌡️', bg:'#EFEAFB', lot:'T-1187', bin:'A-14', zone:'Zone A', qty:1},
+  {name:'Portable AC 1.5T', sku:'AC-15T-004', icon:'❄️', bg:'#E4F5F2', lot:'A-2093', bin:'B-02', zone:'Zone B', qty:3},
+  {name:'Carbon Filter Standard', sku:'FLT-STD-021', icon:'🧯', bg:'#FCEFE2', lot:'C-2291', bin:'C-19', zone:'Zone C', qty:6},
+];
+let currentIndex = 0;
+let scannedState = false;
+let qty = 1;
+
+function renderProgress(){
+  const track = document.getElementById('progressTrack');
+  track.innerHTML = queue.map((_, i) => `<div class="seg ${i<currentIndex?'done':i===currentIndex?'current':''}"></div>`).join('') +
+    `<span class="progress-label">${currentIndex+1} of ${queue.length} items</span>`;
+}
+
+function loadItem(){
+  const item = queue[currentIndex];
+  qty = 1;
+  scannedState = false;
+  document.getElementById('detailSwatch').style.background = item.bg;
+  document.getElementById('detailSwatch').textContent = item.icon;
+  document.getElementById('detailName').textContent = item.name;
+  document.getElementById('detailSku').textContent = item.sku;
+  document.getElementById('detailLot').textContent = item.lot;
+  document.getElementById('detailBin').textContent = item.bin;
+  document.getElementById('detailZone').textContent = item.zone;
+  document.getElementById('qtyVal').textContent = qty;
+  document.getElementById('viewfinder').classList.remove('scanned');
+  document.getElementById('vfCaption').textContent = 'Align barcode within the frame';
+  document.getElementById('confirmBtn').disabled = true;
+  document.getElementById('confirmBtn').classList.remove('done');
+  document.getElementById('confirmBtn').innerHTML = 'Confirm scan <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+  renderProgress();
+}
+loadItem();
+
+document.getElementById('simScanBtn').addEventListener('click', () => {
+  scannedState = true;
+  document.getElementById('viewfinder').classList.add('scanned');
+  document.getElementById('vfCaption').textContent = 'Barcode recognized ✓';
+  document.getElementById('confirmBtn').disabled = false;
+  showToast('Barcode recognized — matches expected lot.');
+});
+
+document.getElementById('qtyMinus').addEventListener('click', () => { if (qty>1){ qty--; document.getElementById('qtyVal').textContent = qty; }});
+document.getElementById('qtyPlus').addEventListener('click', () => { qty++; document.getElementById('qtyVal').textContent = qty; });
+
+const toast = document.getElementById('toast');
+const toastMsg = document.getElementById('toastMsg');
+function showToast(msg){ toastMsg.textContent = msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), 2200); }
+
+document.getElementById('confirmBtn').addEventListener('click', () => {
+  if (!scannedState) return;
+  const item = queue[currentIndex];
+  showToast(`${item.name} confirmed — qty ${qty} added to pick.`);
+  if (currentIndex < queue.length - 1){
+    currentIndex++;
+    setTimeout(loadItem, 500);
+  } else {
+    document.getElementById('confirmBtn').textContent = 'All items scanned ✓';
+    document.getElementById('confirmBtn').classList.add('done');
+    document.getElementById('confirmBtn').disabled = true;
+    setTimeout(() => showToast('All items scanned — ready to mark pick complete.'), 600);
+  }
+});
+
+document.getElementById('mismatchBtn').addEventListener('click', () => {
+  showToast('Mismatch reported — supervisor notified.');
+});
+</script>
+
+</body>
+</html>
+

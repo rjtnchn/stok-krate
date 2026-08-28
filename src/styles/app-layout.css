@@ -1,0 +1,11 @@
+/* styles/app-layout.css — flex row for SideNav + page content, below TopNav */
+
+.app-layout__body {
+  display: flex;
+  align-items: flex-start;
+}
+
+.app-layout__main {
+  flex: 1;
+  min-width: 0;
+}

@@ -1,0 +1,260 @@
+/* styles/top-nav.css — shared top nav bar, tokens matched to admin.css */
+
+.top-nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 56px;
+  padding: 0 16px;
+  background: #1f2430;
+  color: #ffffff;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.top-nav__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.top-nav__logo {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: #2a5bd7;
+}
+
+.top-nav__wordmark {
+  font-size: 14px;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.top-nav__wordmark strong {
+  font-weight: 700;
+}
+
+.top-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+  min-width: 0;
+}
+
+.top-nav__link {
+  font-size: 13px;
+  color: #b7bcc9;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 6px 2px;
+  border-bottom: 2px solid transparent;
+}
+
+.top-nav__link:hover {
+  color: #ffffff;
+}
+
+.top-nav__link--active {
+  color: #ffffff;
+  border-bottom-color: #2a5bd7;
+}
+
+.top-nav__actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.top-nav__search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #2b3140;
+  border: 1px solid #3a4154;
+  border-radius: 6px;
+  padding: 6px 10px;
+  color: #9aa0b2;
+}
+
+.top-nav__search input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-size: 13px;
+  width: 140px;
+  font-family: inherit;
+}
+
+.top-nav__search input::placeholder {
+  color: #7d8398;
+}
+
+.top-nav__search-wrap {
+  position: relative;
+}
+
+.top-nav__search-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 260px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: #1c2338;
+  border: 1px solid #3a4154;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  padding: 6px;
+  z-index: 40;
+}
+
+.top-nav__search-empty {
+  padding: 10px 8px;
+  font-size: 13px;
+  color: #9aa0b2;
+}
+
+.top-nav__search-group + .top-nav__search-group {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #2b3140;
+}
+
+.top-nav__search-group-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #7d8398;
+  padding: 4px 8px;
+}
+
+.top-nav__search-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: #e6e8f0;
+  font-size: 13px;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.top-nav__search-item:hover,
+.top-nav__search-item:focus-visible {
+  background: #2b3140;
+}
+
+.top-nav__search-item-meta {
+  font-size: 11px;
+  color: #9aa0b2;
+}
+
+.top-nav__bell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b7bcc9;
+  text-decoration: none;
+}
+
+.top-nav__bell:hover {
+  color: #ffffff;
+}
+
+.top-nav__badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #c62828;
+  color: #fff;
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.top-nav__account {
+  position: relative;
+}
+
+.top-nav__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #2a5bd7;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.top-nav__avatar:hover {
+  background: #3768e0;
+}
+
+.top-nav__account-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 160px;
+  background: #1c2338;
+  border: 1px solid #3a4154;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  padding: 6px;
+  z-index: 40;
+}
+
+.top-nav__account-role {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #7d8398;
+  padding: 6px 8px 8px;
+  border-bottom: 1px solid #2b3140;
+  margin-bottom: 4px;
+}
+
+.top-nav__account-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: #e6e8f0;
+  font-size: 13px;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.top-nav__account-item:hover {
+  background: #2b3140;
+}
+
+.top-nav__account-item:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -1,0 +1,643 @@
+/* styles/admin.css — shared styling for the Items/Batches admin screens */
+
+html,
+body,
+#root {
+  background-color: #ffffff;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Vite's default index.css sets body to a centered flexbox (display: flex;
+   place-items: center), which squeezes the app into a small centered box
+   instead of letting it fill the page. Reset that here. */
+body {
+  display: block;
+}
+
+/* Override Vite's default template styles on #root (max-width, centered
+   flex box, text-align: center) that constrain the app to a small centered
+   box instead of filling the page. */
+#root {
+  max-width: none;
+  display: block;
+  text-align: left;
+}
+
+.admin-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #1f2430;
+  background-color: #ffffff;
+}
+
+.admin-page h1,
+.admin-page h2 {
+  color: #1f2430;
+}
+
+.admin-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.admin-section {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e2e5eb;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e5eb;
+}
+
+.admin-table th {
+  background: #f5f6f8;
+  font-weight: 600;
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 420px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-field input,
+.form-field select {
+  font-weight: 400;
+  font-size: 14px;
+  padding: 8px 10px;
+  border: 1px solid #c7cbd4;
+  border-radius: 4px;
+}
+
+.form-field--checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.field-error {
+  color: #c62828;
+  font-weight: 400;
+  font-size: 13px;
+}
+
+.admin-form__actions {
+  margin-top: 8px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn--primary {
+  background: #2a5bd7;
+  color: #fff;
+}
+
+.btn--primary:disabled {
+  background: #9db1e8;
+  cursor: not-allowed;
+}
+
+.state-msg {
+  font-size: 14px;
+  color: #55606e;
+}
+
+.state-msg--error {
+  color: #c62828;
+}
+
+.state-msg--success {
+  color: #2e7d32;
+}
+
+.order-row__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.order-row__actions button {
+  padding: 4px 10px;
+  font-size: 13px;
+  border: 1px solid #c7cbd4;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.order-row__actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.check-now {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e2e5eb;
+}
+
+.tabs__tab {
+  padding: 8px 14px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: #55606e;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.tabs__tab--active {
+  color: #2a5bd7;
+  border-bottom-color: #2a5bd7;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge--critical {
+  background: #fde2e1;
+  color: #c62828;
+}
+
+.badge--warning {
+  background: #fff2cc;
+  color: #9a6a00;
+}
+
+.text-critical {
+  color: #c62828;
+  font-weight: 600;
+}
+
+.row--highlight {
+  background: #fff2cc;
+}
+
+.row--critical {
+  background: #fde2e1;
+}
+
+.summary-cards {
+  display: flex;
+  gap: 16px;
+  margin: 16px 0 8px;
+}
+
+.summary-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  border: 1px solid #e2e5eb;
+  border-radius: 6px;
+  background: #f9fafb;
+}
+
+.summary-card__value {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.summary-card__label {
+  font-size: 13px;
+  color: #55606e;
+}
+
+.quick-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.spinner {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- Reorder Alerts card-style view --- */
+
+.kpi-cards {
+  display: flex;
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.kpi-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  border: 1px solid #e2e5eb;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+}
+
+.kpi-card__value {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1f2430;
+}
+
+.kpi-card--critical .kpi-card__value {
+  color: #c62828;
+}
+
+.kpi-card--warning .kpi-card__value {
+  color: #9a6a00;
+}
+
+.kpi-card__label {
+  font-size: 13px;
+  color: #55606e;
+}
+
+.pill-filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.pill-filter {
+  display: flex;
+  gap: 6px;
+  background: #f2f3f6;
+  padding: 4px;
+  border-radius: 999px;
+}
+
+.pill-filter__pill {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: #55606e;
+  cursor: pointer;
+}
+
+.pill-filter__pill--active {
+  background: #ffffff;
+  color: #1f2430;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.08);
+}
+
+.sort-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #55606e;
+}
+
+.sort-select select {
+  font-weight: 400;
+  font-size: 13px;
+  padding: 6px 10px;
+  border: 1px solid #c7cbd4;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.alert-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.alert-card {
+  border: 1px solid #e2e5eb;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+  padding: 14px 18px;
+}
+
+.alert-card__row {
+  display: grid;
+  grid-template-columns: 2fr 2fr 0.8fr 1fr 1fr 1fr auto;
+  align-items: center;
+  gap: 16px;
+}
+
+.alert-card__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.alert-card__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #eef1fb;
+  color: #2a5bd7;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.alert-card__item-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2430;
+}
+
+.alert-card__item-sku {
+  font-size: 12px;
+  color: #55606e;
+}
+
+.alert-card__progress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: #eceff3;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: #9a6a00;
+}
+
+.progress-fill.badge--critical {
+  background: #c62828;
+}
+
+.progress-fill.badge--warning {
+  background: #d9a400;
+}
+
+.alert-card__progress-label {
+  font-size: 12px;
+  color: #55606e;
+}
+
+.alert-card__deficit {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.alert-card__suggested {
+  font-size: 13px;
+  color: #1f2430;
+}
+
+.alert-card__meta {
+  font-size: 12px;
+  color: #55606e;
+}
+
+.alert-card__error {
+  margin: 8px 0 0;
+}
+
+.btn--dark-pill {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: none;
+  background: #1f2430;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn--dark-pill:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 860px) {
+  .alert-card__row {
+    grid-template-columns: 1fr;
+    row-gap: 8px;
+  }
+}
+
+/* styles/top-nav.css — shared top nav bar, tokens matched to admin.css */
+
+.top-nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 56px;
+  padding: 0 16px;
+  background: #1f2430;
+  color: #ffffff;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.top-nav__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.top-nav__logo {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: #2a5bd7;
+}
+
+.top-nav__wordmark {
+  font-size: 14px;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.top-nav__wordmark strong {
+  font-weight: 700;
+}
+
+.top-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+  min-width: 0;
+}
+
+.top-nav__link {
+  font-size: 13px;
+  color: #b7bcc9;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 6px 2px;
+  border-bottom: 2px solid transparent;
+}
+
+.top-nav__link:hover {
+  color: #ffffff;
+}
+
+.top-nav__link--active {
+  color: #ffffff;
+  border-bottom-color: #2a5bd7;
+}
+
+.top-nav__actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.top-nav__search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #2b3140;
+  border: 1px solid #3a4154;
+  border-radius: 6px;
+  padding: 6px 10px;
+  color: #9aa0b2;
+}
+
+.top-nav__search input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-size: 13px;
+  width: 140px;
+  font-family: inherit;
+}
+
+.top-nav__search input::placeholder {
+  color: #7d8398;
+}
+
+.top-nav__bell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b7bcc9;
+  text-decoration: none;
+}
+
+.top-nav__bell:hover {
+  color: #ffffff;
+}
+
+.top-nav__badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #c62828;
+  color: #fff;
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.top-nav__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #2a5bd7;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+}

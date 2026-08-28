@@ -1,0 +1,250 @@
+/* styles/admin.css — shared styling for the Items/Batches admin screens */
+
+.admin-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #1f2430;
+}
+
+.admin-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.admin-section {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e2e5eb;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e5eb;
+}
+
+.admin-table th {
+  background: #f5f6f8;
+  font-weight: 600;
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 420px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-field input,
+.form-field select {
+  font-weight: 400;
+  font-size: 14px;
+  padding: 8px 10px;
+  border: 1px solid #c7cbd4;
+  border-radius: 4px;
+}
+
+.form-field--checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.field-error {
+  color: #c62828;
+  font-weight: 400;
+  font-size: 13px;
+}
+
+.admin-form__actions {
+  margin-top: 8px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn--primary {
+  background: #2a5bd7;
+  color: #fff;
+}
+
+.btn--primary:disabled {
+  background: #9db1e8;
+  cursor: not-allowed;
+}
+
+.state-msg {
+  font-size: 14px;
+  color: #55606e;
+}
+
+.state-msg--error {
+  color: #c62828;
+}
+
+.state-msg--success {
+  color: #2e7d32;
+}
+
+.order-row__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.order-row__actions button {
+  padding: 4px 10px;
+  font-size: 13px;
+  border: 1px solid #c7cbd4;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.order-row__actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.check-now {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e2e5eb;
+}
+
+.tabs__tab {
+  padding: 8px 14px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: #55606e;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.tabs__tab--active {
+  color: #2a5bd7;
+  border-bottom-color: #2a5bd7;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge--critical {
+  background: #fde2e1;
+  color: #c62828;
+}
+
+.badge--warning {
+  background: #fff2cc;
+  color: #9a6a00;
+}
+
+.text-critical {
+  color: #c62828;
+  font-weight: 600;
+}
+
+.row--highlight {
+  background: #fff2cc;
+}
+
+.row--critical {
+  background: #fde2e1;
+}
+
+.summary-cards {
+  display: flex;
+  gap: 16px;
+  margin: 16px 0 8px;
+}
+
+.summary-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  border: 1px solid #e2e5eb;
+  border-radius: 6px;
+  background: #f9fafb;
+}
+
+.summary-card__value {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.summary-card__label {
+  font-size: 13px;
+  color: #55606e;
+}
+
+.quick-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.spinner {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

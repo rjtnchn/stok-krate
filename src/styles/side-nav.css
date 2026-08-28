@@ -1,0 +1,48 @@
+/* styles/side-nav.css — admin sidebar, tokens matched to admin.css */
+
+.side-nav {
+  width: 220px;
+  flex-shrink: 0;
+  padding: 20px 12px;
+  background: #fafbfc;
+  border-right: 1px solid #e2e5eb;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.side-nav__section {
+  margin-bottom: 24px;
+}
+
+.side-nav__section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8a91a3;
+  padding: 0 10px;
+  margin-bottom: 8px;
+}
+
+.side-nav__links {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.side-nav__link {
+  font-size: 14px;
+  color: #1f2430;
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 6px;
+}
+
+.side-nav__link:hover {
+  background: #f2f3f6;
+}
+
+.side-nav__link--active {
+  background: #eef1fb;
+  color: #2a5bd7;
+  font-weight: 600;
+}

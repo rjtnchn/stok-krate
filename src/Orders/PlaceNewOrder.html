@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WalangBrownout — Place a New Order</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-deep:#0E1620;
+  --card:#FFFFFF;
+  --accent-cool:#3FC7B8; --accent-cool-dim:#2A9C90;
+  --accent-warm:#F2A65A;
+  --text-onLight:#16212B; --text-onLight-muted:#6B7A88;
+  --border-light:#E1DCD1;
+  --ok:#3FC7B8; --warn:#F2A65A; --crit:#E2695B;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:'Inter',sans-serif; background:#E8E4DB; color:var(--text-onLight); min-height:100vh; padding:32px;}
+button{font-family:inherit; cursor:pointer;}
+
+.frame{background:var(--card); max-width:1120px; margin:0 auto; border-radius:16px; box-shadow:0 20px 50px -18px rgba(20,25,30,0.25); overflow:hidden;}
+
+/* header */
+.app-header{display:flex; align-items:center; gap:20px; padding:16px 28px; border-bottom:1px solid var(--border-light); background:var(--card);}
+.logo-block{display:flex; align-items:center; gap:10px;}
+.logo-mark{width:34px;height:34px;border-radius:8px; background:linear-gradient(135deg,var(--accent-cool),var(--accent-cool-dim)); display:flex;align-items:center;justify-content:center; flex-shrink:0;}
+.logo-mark svg{width:18px;height:18px;}
+.wordmark{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:15px;}
+.wordmark span{color:var(--accent-cool);}
+.header-nav{display:flex; gap:26px; margin-left:8px;}
+.header-nav a{font-size:12.5px; font-weight:500; color:var(--text-onLight-muted); text-decoration:none;}
+.header-nav a.active{color:var(--text-onLight); font-weight:600;}
+.header-right{margin-left:auto; display:flex; align-items:center; gap:16px;}
+.avatar{width:32px;height:32px;border-radius:50%; background:linear-gradient(135deg,var(--accent-warm),#d98a3a); display:flex;align-items:center;justify-content:center; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:11px; color:#2b1a05;}
+
+.body-pad{padding:26px 28px 34px;}
+.top-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px;}
+.back-link{display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--text-onLight-muted); background:none; border:none;}
+.back-link svg{width:14px;height:14px;}
+.back-link:hover{color:var(--text-onLight);}
+.role-tag{display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.06em; color:var(--accent-cool-dim); background:rgba(63,199,184,0.10); border:1px solid rgba(63,199,184,0.3); padding:4px 10px; border-radius:14px;}
+
+h1.page-title{font-family:'Space Grotesk',sans-serif; font-size:21px; font-weight:600; margin:0 0 4px 0;}
+p.page-sub{margin:0 0 20px 0; font-size:12.8px; color:var(--text-onLight-muted);}
+
+/* ================= FORM VIEW ================= */
+.form-layout{display:grid; grid-template-columns:1.5fr 1fr; gap:18px;}
+.panel{border:1px solid var(--border-light); border-radius:13px; padding:20px 22px;}
+.panel h3{font-family:'Space Grotesk',sans-serif; font-size:14.5px; margin:0 0 16px 0;}
+
+.field-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px;}
+.field{grid-column:span 1;}
+.field.full{grid-column:span 2;}
+.field label{display:block; font-size:11.5px; font-weight:600; color:var(--text-onLight-muted); margin-bottom:6px;}
+.field input, .field select{width:100%; padding:10px 12px; border:1px solid var(--border-light); border-radius:9px; font-size:13px; outline:none;}
+.field input:focus, .field select:focus{border-color:var(--accent-cool-dim); box-shadow:0 0 0 3px rgba(63,199,184,0.16);}
+
+/* item picker */
+.add-item-row{display:flex; gap:10px; margin-bottom:14px;}
+.add-item-row select{flex:1.6; padding:10px 12px; border:1px solid var(--border-light); border-radius:9px; font-size:13px;}
+.add-item-row input{flex:0.6; padding:10px 12px; border:1px solid var(--border-light); border-radius:9px; font-size:13px;}
+.add-item-btn{background:var(--text-onLight); color:#fff; border:none; border-radius:9px; padding:10px 16px; font-weight:600; font-size:12.5px; display:flex; align-items:center; gap:6px; flex-shrink:0;}
+.add-item-btn:hover{background:#000;}
+.add-item-btn svg{width:13px;height:13px;}
+
+.cart-list{border-top:1px solid var(--border-light);}
+.cart-row{display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid #F0ECE3;}
+.cart-swatch{width:36px;height:36px;border-radius:9px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:16px;}
+.cart-info{flex:1;}
+.cart-info .name{font-weight:600; font-size:12.8px;}
+.cart-info .price{font-size:10.8px; color:var(--text-onLight-muted); font-family:'IBM Plex Mono',monospace;}
+.cart-qty{display:flex; align-items:center; gap:8px;}
+.cart-qty button{width:24px;height:24px;border-radius:6px; border:1px solid var(--border-light); background:var(--card); font-size:13px; font-weight:600;}
+.cart-qty .v{font-weight:600; font-size:12.8px; width:18px; text-align:center;}
+.cart-line-total{width:80px; text-align:right; font-weight:600; font-size:12.8px; font-family:'Space Grotesk',sans-serif;}
+.remove-btn{background:none; border:none; color:var(--text-onLight-muted); padding:4px;}
+.remove-btn:hover{color:var(--crit);}
+.remove-btn svg{width:14px;height:14px;}
+.cart-empty{text-align:center; padding:34px 10px; color:var(--text-onLight-muted); font-size:12.5px;}
+
+/* summary panel */
+.summary-row-line{display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid #F0ECE3; font-size:12.8px;}
+.summary-row-line:last-child{border-bottom:none;}
+.summary-row-line span:first-child{color:var(--text-onLight-muted);}
+.summary-row-line span:last-child{font-weight:600;}
+.summary-row-line.total span{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px; color:var(--text-onLight);}
+
+.stock-warning{display:none; align-items:flex-start; gap:8px; background:rgba(226,105,91,0.10); border:1px solid rgba(226,105,91,0.3); border-radius:9px; padding:10px 12px; font-size:11.3px; color:#b8392c; margin:14px 0;}
+.stock-warning.show{display:flex;}
+.stock-warning svg{width:14px;height:14px; flex-shrink:0; margin-top:1px;}
+
+.place-btn{width:100%; margin-top:16px; background:linear-gradient(135deg,var(--accent-cool),var(--accent-cool-dim)); color:#08201C; border:none; border-radius:10px; padding:13px; font-weight:600; font-size:13.5px; display:flex; align-items:center; justify-content:center; gap:8px;}
+.place-btn:disabled{opacity:0.4;}
+.place-btn svg{width:15px;height:15px;}
+
+/* ================= SUCCESS VIEW ================= */
+#successView{display:none; text-align:center; padding:46px 20px 26px;}
+.success-icon{width:80px;height:80px;border-radius:50%; background:rgba(63,199,184,0.13); display:flex; align-items:center; justify-content:center; margin:0 auto 20px; animation:pop .4s ease;}
+.success-icon svg{width:40px;height:40px; color:var(--accent-cool-dim);}
+@keyframes pop{0%{transform:scale(0.7); opacity:0;} 60%{transform:scale(1.08);} 100%{transform:scale(1); opacity:1;}}
+h2.success-title{font-family:'Space Grotesk',sans-serif; font-size:21px; font-weight:600; margin:0 0 8px 0;}
+p.success-sub{font-size:12.8px; color:var(--text-onLight-muted); margin:0 0 24px 0; max-width:420px; margin-left:auto; margin-right:auto;}
+.success-stats{display:flex; justify-content:center; gap:32px; margin-bottom:26px; flex-wrap:wrap;}
+.success-stat .v{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:19px;}
+.success-stat .l{font-size:10.3px; color:var(--text-onLight-muted); text-transform:uppercase; letter-spacing:0.05em; font-family:'IBM Plex Mono',monospace; margin-top:3px;}
+.success-actions{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+.btn-next{background:var(--text-onLight); color:#fff; border:none; border-radius:10px; padding:12px 24px; font-weight:600; font-size:13px; display:flex; align-items:center; gap:8px;}
+.btn-next:hover{background:#000;}
+.btn-next svg{width:14px;height:14px;}
+.btn-secondary{border:1px solid var(--border-light); background:var(--card); border-radius:10px; padding:12px 20px; font-weight:600; font-size:13px; color:var(--text-onLight-muted);}
+
+.toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--bg-deep); color:#EAF1F5; padding:11px 18px; border-radius:10px; font-size:12.5px; display:flex; align-items:center; gap:9px; box-shadow:0 12px 32px -10px rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition:.25s; z-index:100;}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+.toast svg{width:15px;height:15px; color:var(--accent-cool); flex-shrink:0;}
+
+@media (max-width:760px){ .form-layout{grid-template-columns:1fr;} .field-grid{grid-template-columns:1fr;} .field.full{grid-column:span 1;} .header-nav{display:none;} }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="app-header">
+    <div class="logo-block">
+      <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2L4 7v10l8 5 8-5V7l-8-5z" stroke="#04211D" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 9v6M9 12h6" stroke="#04211D" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+      <div class="wordmark">Walang<span>Brownout</span></div>
+    </div>
+    <div class="header-nav">
+      <a>Picking</a>
+      <a>Receiving</a>
+      <a class="active">Orders</a>
+    </div>
+    <div class="header-right"><div class="avatar">JC</div></div>
+  </div>
+
+  <div class="body-pad">
+
+    <!-- ================= FORM VIEW ================= -->
+    <div id="formView">
+      <div class="top-row">
+        <button class="back-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to order list</button>
+        <div class="role-tag">ROLE — STAFF · ORDERS</div>
+      </div>
+
+      <h1 class="page-title">Place a New Order</h1>
+      <p class="page-sub">Create a manual order entry on behalf of a customer</p>
+
+      <div class="form-layout">
+        <div class="panel">
+          <h3>Customer &amp; delivery</h3>
+          <div class="field-grid">
+            <div class="field"><label>Customer name</label><input type="text" id="custName" placeholder="e.g. Maria Lopez"></div>
+            <div class="field"><label>Contact number</label><input type="text" id="custPhone" placeholder="e.g. 0917 123 4567"></div>
+            <div class="field full"><label>Delivery address</label><input type="text" id="custAddr" placeholder="e.g. Lipa City, Batangas"></div>
+          </div>
+
+          <h3>Add items</h3>
+          <div class="add-item-row">
+            <select id="itemSelect">
+              <option value="">Select item...</option>
+              <option value="0">Portable AC — 1.5T</option>
+              <option value="1">Portable AC — 2.0T</option>
+              <option value="2">Air Purifier — Compact</option>
+              <option value="3">Carbon Filter — Standard</option>
+              <option value="4">Smart Thermostat — V2</option>
+            </select>
+            <input type="number" id="itemQty" value="1" min="1">
+            <button class="add-item-btn" id="addItemBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Add</button>
+          </div>
+
+          <div class="cart-list" id="cartList"></div>
+        </div>
+
+        <div class="panel">
+          <h3>Order summary</h3>
+          <div class="summary-row-line"><span>Items</span><span id="sumItemCount">0</span></div>
+          <div class="summary-row-line"><span>Subtotal</span><span id="sumSubtotal">₱0</span></div>
+          <div class="summary-row-line"><span>Delivery fee</span><span id="sumDelivery">₱350</span></div>
+          <div class="summary-row-line total"><span>Total</span><span id="sumTotal">₱0</span></div>
+
+          <div class="stock-warning" id="stockWarning">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg>
+            <span id="stockWarningText"></span>
+          </div>
+
+          <button class="place-btn" id="placeBtn" disabled>Place order <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= SUCCESS VIEW ================= -->
+    <div id="successView">
+      <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <h2 class="success-title">Order placed</h2>
+      <p class="success-sub" id="successSub">The order has been created and is now showing as Pending in the order list.</p>
+      <div class="success-stats">
+        <div class="success-stat"><div class="v" id="statOrderId">—</div><div class="l">Order ID</div></div>
+        <div class="success-stat"><div class="v" id="statItems">—</div><div class="l">Line items</div></div>
+        <div class="success-stat"><div class="v" id="statTotal">—</div><div class="l">Total</div></div>
+      </div>
+      <div class="success-actions">
+        <button class="btn-secondary" id="viewListBtn">View order list</button>
+        <button class="btn-next" id="placeAnotherBtn">Place another order <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg><span id="toastMsg"></span></div>
+
+<script>
+const catalog = [
+  {name:'Portable AC — 1.5T', icon:'❄️', bg:'#E4F5F2', price:24999, stock:910},
+  {name:'Portable AC — 2.0T', icon:'❄️', bg:'#E4F5F2', price:29999, stock:620},
+  {name:'Air Purifier — Compact', icon:'🌬️', bg:'#EAF4FF', price:6200, stock:58},
+  {name:'Carbon Filter — Standard', icon:'🧯', bg:'#FCEFE2', price:650, stock:340},
+  {name:'Smart Thermostat — V2', icon:'🌡️', bg:'#EFEAFB', price:8500, stock:12},
+];
+let cart = [];
+let orderCounter = 1045;
+
+function fmt(n){ return '₱' + n.toLocaleString(); }
+
+function renderCart(){
+  const list = document.getElementById('cartList');
+  if (cart.length === 0){
+    list.innerHTML = '<div class="cart-empty">No items added yet — select an item above to add it to this order.</div>';
+  } else {
+    list.innerHTML = cart.map((c, i) => `
+      <div class="cart-row">
+        <div class="cart-swatch" style="background:${c.bg};">${c.icon}</div>
+        <div class="cart-info"><div class="name">${c.name}</div><div class="price">${fmt(c.price)} each</div></div>
+        <div class="cart-qty">
+          <button onclick="changeQty(${i},-1)">–</button>
+          <span class="v">${c.qty}</span>
+          <button onclick="changeQty(${i},1)">+</button>
+        </div>
+        <div class="cart-line-total">${fmt(c.qty*c.price)}</div>
+        <button class="remove-btn" onclick="removeItem(${i})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>`).join('');
+  }
+  updateSummary();
+}
+
+function updateSummary(){
+  const itemCount = cart.reduce((s,c)=>s+c.qty,0);
+  const subtotal = cart.reduce((s,c)=>s+c.qty*c.price,0);
+  const delivery = cart.length > 0 ? 350 : 0;
+  const total = subtotal + delivery;
+
+  document.getElementById('sumItemCount').textContent = itemCount;
+  document.getElementById('sumSubtotal').textContent = fmt(subtotal);
+  document.getElementById('sumDelivery').textContent = fmt(delivery);
+  document.getElementById('sumTotal').textContent = fmt(total);
+
+  const lowStockItems = cart.filter(c => c.qty > c.stock);
+  const warningEl = document.getElementById('stockWarning');
+  if (lowStockItems.length > 0){
+    warningEl.classList.add('show');
+    document.getElementById('stockWarningText').textContent = `${lowStockItems[0].name} only has ${lowStockItems[0].stock} units available — order may be delayed.`;
+  } else {
+    warningEl.classList.remove('show');
+  }
+
+  const custName = document.getElementById('custName').value.trim();
+  const custAddr = document.getElementById('custAddr').value.trim();
+  document.getElementById('placeBtn').disabled = !(cart.length > 0 && custName && custAddr);
+}
+
+document.getElementById('custName').addEventListener('input', updateSummary);
+document.getElementById('custAddr').addEventListener('input', updateSummary);
+
+document.getElementById('addItemBtn').addEventListener('click', () => {
+  const idx = document.getElementById('itemSelect').value;
+  const qty = Number(document.getElementById('itemQty').value) || 1;
+  if (idx === '') { showToast('Select an item first.'); return; }
+  const item = catalog[idx];
+  const existing = cart.find(c => c.name === item.name);
+  if (existing) existing.qty += qty;
+  else cart.push({...item, qty});
+  renderCart();
+  document.getElementById('itemSelect').value = '';
+  document.getElementById('itemQty').value = 1;
+  showToast(`${item.name} added to order.`);
+});
+
+window.changeQty = function(i, delta){
+  cart[i].qty += delta;
+  if (cart[i].qty < 1) cart[i].qty = 1;
+  renderCart();
+};
+window.removeItem = function(i){
+  cart.splice(i,1);
+  renderCart();
+};
+
+const toast = document.getElementById('toast');
+const toastMsg = document.getElementById('toastMsg');
+function showToast(msg){ toastMsg.textContent = msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), 2200); }
+
+document.getElementById('placeBtn').addEventListener('click', () => {
+  const orderId = 'WB-' + orderCounter;
+  const itemCount = cart.reduce((s,c)=>s+c.qty,0);
+  const total = cart.reduce((s,c)=>s+c.qty*c.price,0) + 350;
+
+  document.getElementById('statOrderId').textContent = orderId;
+  document.getElementById('statItems').textContent = itemCount;
+  document.getElementById('statTotal').textContent = fmt(total);
+  document.getElementById('successSub').textContent = `${orderId} has been created for ${document.getElementById('custName').value} and is now showing as Pending in the order list.`;
+
+  document.getElementById('formView').style.display = 'none';
+  document.getElementById('successView').style.display = 'block';
+  showToast(`Order ${orderId} placed.`);
+});
+
+document.getElementById('placeAnotherBtn').addEventListener('click', () => {
+  orderCounter++;
+  cart = [];
+  document.getElementById('custName').value = '';
+  document.getElementById('custPhone').value = '';
+  document.getElementById('custAddr').value = '';
+  renderCart();
+  document.getElementById('successView').style.display = 'none';
+  document.getElementById('formView').style.display = 'block';
+});
+document.getElementById('viewListBtn').addEventListener('click', () => showToast('Opening order list...'));
+
+renderCart();
+</script>
+
+</body>
+</html>
+
