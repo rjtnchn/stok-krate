@@ -4,28 +4,38 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    /**
+     * Authenticate user and issue a Sanctum token.
+     */
+    public function login(Request $request): JsonResponse
     {
-        $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
+        $credentials = $request->validate([
+            'email'    => ['required', 'string', 'email'],
+            'password' => ['required', 'string'],
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $credentials['email'])->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials do not match our records.'],
             ]);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        if ($user->deactivated_at !== null) {
+            return response()->json([
+                'message' => 'This account has been deactivated.',
+            ], 403);
+        }
+
+        $token = $user->createToken('wb-ims-auth-token')->plainTextToken;
 
         return response()->json([
             'message'      => 'Login successful',
@@ -35,15 +45,23 @@ class AuthController extends Controller
         ]);
     }
 
-    public function me(Request $request)
-    {
-        return response()->json($request->user()->load('role'));
-    }
-
-    public function logout(Request $request)
+    /**
+     * Revoke the current authenticated user's access token.
+     */
+    public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json([
+            'message' => 'Logged out successfully.',
+        ]);
+    }
+
+    /**
+     * Get the authenticated user's profile.
+     */
+    public function me(Request $request): JsonResponse
+    {
+        return response()->json($request->user()->load('role'));
     }
 }

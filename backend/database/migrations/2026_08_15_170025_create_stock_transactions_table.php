@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('stock_transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('batch_id')->constrained();
+            $table->foreignId('batch_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained();
-            $table->string('type', 20); //  Valid types: `receipt`, `reservation`, `fulfillment`, `adjustment`, `cancellation` 
+            $table->string('type', 20);
             $table->integer('quantity');
             $table->timestamp('created_at')->useCurrent();
         });
