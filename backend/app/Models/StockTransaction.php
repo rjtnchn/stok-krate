@@ -68,10 +68,7 @@ class StockTransaction extends Model
     /**
      * Record an immutable stock transaction log entry.
      *
-     * @param  int  $batchId
-     * @param  int  $userId
-     * @param  string  $type ('add', 'deduct', 'reserve', 'release', etc.)
-     * @param  int  $quantity
+     * @param  string  $type  ('add', 'deduct', 'reserve', 'release', etc.)
      * @return static
      */
     public static function recordTransaction(int $batchId, int $userId, string $type, int $quantity): self

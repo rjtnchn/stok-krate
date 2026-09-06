@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Batch;
 use App\Models\Item;
 use App\Models\StockTransaction;
 use App\Models\User;

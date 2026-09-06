@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Item;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -18,11 +20,11 @@ class StoreBatchRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
-        $itemId = $this->route('item') instanceof \App\Models\Item
+        $itemId = $this->route('item') instanceof Item
             ? $this->route('item')->id
             : $this->route('item');
 
