@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('batches', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('item_id')->constrained('items');
+            $table->foreignId('item_id')->constrained('items')->cascadeOnDelete();
             $table->string('lot_number', 50);
             $table->integer('quantity_on_hand')->default(0);
             $table->integer('reserved_qty')->default(0);
@@ -21,6 +21,7 @@ return new class extends Migration
             $table->date('expiry_date')->nullable();
             $table->dateTime('last_updated');
             $table->unique(['item_id', 'lot_number']);
+            $table->timestamps();
         });
     }
 

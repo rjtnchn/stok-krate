@@ -16,14 +16,14 @@ return new class extends Migration
             $table->string('sku')->unique();
             $table->string('item_name');
             $table->string('category');
-            $table->char('turnover_category', 1); // A, B, or C
+            $table->enum('turnover_category', ['A', 'B', 'C']);
             $table->boolean('is_seasonal')->default(false);
             $table->integer('reorder_point')->default(0);
             $table->decimal('current_sf', 4, 2)->default(1.00);
             $table->integer('lead_time_days')->default(0);
             $table->integer('demand_max')->default(0);
             $table->integer('lead_time_max')->default(0);
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 
