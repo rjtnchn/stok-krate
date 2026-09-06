@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Batch;
 use App\Models\Item;
 use App\Models\StockTransaction;
 use App\Models\User;
@@ -14,6 +13,7 @@ class InventoryApiTest extends TestCase
     use DatabaseTransactions;
 
     protected User $admin;
+
     protected User $staff;
 
     protected function setUp(): void

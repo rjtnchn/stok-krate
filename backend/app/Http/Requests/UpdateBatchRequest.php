@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Batch;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -18,13 +20,13 @@ class UpdateBatchRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         $batch = $this->route('batch');
-        $batchId = $batch instanceof \App\Models\Batch ? $batch->id : $batch;
-        $itemId = $batch instanceof \App\Models\Batch ? $batch->item_id : null;
+        $batchId = $batch instanceof Batch ? $batch->id : $batch;
+        $itemId = $batch instanceof Batch ? $batch->item_id : null;
 
         return [
             'lot_number' => [
