@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+<<<<<<< HEAD
         Role::firstOrCreate(['role_name' => 'Admin']);
         Role::firstOrCreate(['role_name' => 'Staff']);
 
@@ -31,5 +32,26 @@ class DatabaseSeeder extends Seeder
                 'role_id' => 2,
             ]);
         }
+=======
+        User::firstOrCreate(
+            ['email' => 'admin@walangbrownout.ph'],
+            [
+                'name' => 'Admin User',
+                'password' => bcrypt('password'),
+                'role' => 'Admin',
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'staff@walangbrownout.ph'],
+            [
+                'name' => 'Staff User',
+                'password' => bcrypt('password'),
+                'role' => 'Staff',
+            ]
+        );
+
+        $this->call(ItemSeeder::class);
+>>>>>>> 0b36525 (feat: implement items, batches, and stock transaction backend (sprint 2))
     }
 }
