@@ -15,18 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-<<<<<<< HEAD
-<<<<<<< HEAD
-    'role' => \App\Http\Middleware\RoleMiddleware::class,
-        ]);
-        //
-=======
-            'role' => \App\Http\Middleware\CheckRole::class,
-=======
             'role' => CheckRole::class,
->>>>>>> b8165fe (feat: complete endpoint testing and validation fixes)
         ]);
->>>>>>> 0b36525 (feat: implement items, batches, and stock transaction backend (sprint 2))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

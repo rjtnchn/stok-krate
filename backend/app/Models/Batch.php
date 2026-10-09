@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -32,6 +33,14 @@ class Batch extends Model
         'expiry_date',
         'last_updated',
     ];
+
+    /**
+     * Always include the computed available_qty when a batch is serialised to
+     * JSON (SPEC.md: "available_qty computed server-side, not stored").
+     *
+     * @var list<string>
+     */
+    protected $appends = ['available_qty'];
 
     /**
      * Get the attributes that should be cast.
@@ -66,10 +75,17 @@ class Batch extends Model
     }
 
     /**
-     * Get the available quantity (on hand minus reserved).
+     * available_qty = quantity_on_hand - reserved_qty (FR-07).
+     *
+     * Computed on the fly and never stored - there is deliberately no
+     * `available_qty` column. It is also deliberately NOT clamped at zero: if
+     * bad data ever pushes reserved_qty above quantity_on_hand, a negative
+     * number here is a loud signal, whereas max(0, ...) would hide it.
      */
-    public function getAvailableQuantityAttribute(): int
+    protected function availableQty(): Attribute
     {
-        return max(0, $this->quantity_on_hand - $this->reserved_qty);
+        return Attribute::get(
+            fn (): int => (int) $this->quantity_on_hand - (int) $this->reserved_qty
+        );
     }
 }

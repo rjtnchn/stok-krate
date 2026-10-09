@@ -11,6 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Duplicate of 2026_08_31_152024_create_personal_access_tokens_table.
+        // Skip when the table already exists so a fresh `migrate` doesn't crash.
+        if (Schema::hasTable('personal_access_tokens')) {
+            return;
+        }
+
         Schema::create('personal_access_tokens', function (Blueprint $table) {
             $table->id();
             $table->morphs('tokenable');

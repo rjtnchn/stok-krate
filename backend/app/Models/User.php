@@ -67,4 +67,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(StockTransaction::class);
     }
+
+    /**
+     * Get the orders associated with the user.
+     */
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
 }
