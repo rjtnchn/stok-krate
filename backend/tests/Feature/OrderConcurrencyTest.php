@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Alert;
 use App\Models\Batch;
 use App\Models\Item;
 use App\Models\Order;
@@ -53,6 +54,7 @@ class OrderConcurrencyTest extends TestCase
 
             Order::whereIn('item_id', $this->itemIds)->delete();
             StockTransaction::whereIn('batch_id', $batchIds)->delete();
+            Alert::whereIn('item_id', $this->itemIds)->delete();
             DB::table('personal_access_tokens')
                 ->where('tokenable_type', User::class)
                 ->whereIn('tokenable_id', $this->userIds)
@@ -193,6 +195,55 @@ class OrderConcurrencyTest extends TestCase
         $this->assertSame(1, StockTransaction::where('batch_id', $batch->id)->where('type', 'fulfillment')->count());
     }
 
+    public function test_cancel_racing_fulfil_on_the_same_order_has_exactly_one_winner(): void
+    {
+        [$item, $batch] = $this->makeStock(onHand: 10);
+        $user = $this->makeUser();
+        $order = app(OrderService::class)->place($user, $item->id, 4);
+        $startAt = microtime(true) + 2.0;
+
+        $workers = [
+            'fulfil' => $this->spawn($this->tokenFor($user), 'PUT', "/api/orders/{$order->id}/fulfil", [], $startAt),
+            'cancel' => $this->spawn($this->tokenFor($user), 'PUT', "/api/orders/{$order->id}/cancel", [], $startAt),
+        ];
+        $results = array_map(fn (Process $p) => $this->outcome($p), $workers);
+
+        $this->assertSame([200, 409], collect($results)->pluck('status')->sort()->values()->all(), json_encode($results));
+
+        $batch->refresh();
+        $this->assertSame(0, $batch->reserved_qty, 'The reservation is released exactly once, never twice.');
+
+        if ($results['fulfil']['status'] === 200) {
+            $this->assertSame(6, $batch->quantity_on_hand);
+            $this->assertSame('fulfilled', $order->refresh()->status->value);
+            $this->assertSame('ALREADY_FULFILLED', $results['cancel']['body']['error']);
+        } else {
+            $this->assertSame(10, $batch->quantity_on_hand);
+            $this->assertSame('cancelled', $order->refresh()->status->value);
+            $this->assertSame('ORDER_CANCELLED', $results['fulfil']['body']['error']);
+        }
+        $this->assertSame(1, StockTransaction::where('batch_id', $batch->id)->whereIn('type', ['fulfillment', 'cancellation'])->count());
+    }
+
+    public function test_simultaneous_orders_crossing_the_reorder_point_raise_only_one_alert(): void
+    {
+        [$item] = $this->makeStock(onHand: 4, reorderPoint: 10);
+        $startAt = microtime(true) + 3.0;
+
+        $workers = [];
+        for ($i = 0; $i < 4; $i++) {
+            $workers[] = $this->spawn($this->makeUserToken(), 'POST', '/api/orders', ['item_id' => $item->id, 'quantity' => 1], $startAt);
+        }
+        $results = array_map(fn (Process $p) => $this->outcome($p), $workers);
+
+        $this->assertSame([201, 201, 201, 201], collect($results)->pluck('status')->all(), json_encode($results));
+        $this->assertSame(
+            1,
+            Alert::where('item_id', $item->id)->where('alert_type', 'reorder_alert')->where('resolved', false)->count(),
+            'FR-18: a reorder alert must fire once, not once per concurrent order.'
+        );
+    }
+
     /**
      * Same deterministic technique for Trigger 2: fulfilling must lock the
      * batch row with SELECT ... FOR UPDATE before it decrements anything, so a
@@ -231,14 +282,14 @@ class OrderConcurrencyTest extends TestCase
     // ---------------------------------------------------------------------
 
     /** @return array{0: Item, 1: Batch} */
-    private function makeStock(int $onHand): array
+    private function makeStock(int $onHand, int $reorderPoint = 0): array
     {
         $item = Item::create([
             'sku' => 'CONC-'.uniqid(),
             'item_name' => 'Concurrency Test Item',
             'category' => 'Testing',
             'turnover_category' => 'A',
-            'reorder_point' => 0,
+            'reorder_point' => $reorderPoint,
         ]);
         $this->itemIds[] = $item->id;
 

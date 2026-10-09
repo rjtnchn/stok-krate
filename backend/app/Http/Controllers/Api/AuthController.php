@@ -39,9 +39,12 @@ class AuthController extends Controller
 
         return response()->json([
             'message'      => 'Login successful',
+            'token'        => $token,
             'access_token' => $token,
             'token_type'   => 'Bearer',
-            'user'         => $user->load('role'),
+            // `role` is a plain ENUM column on users (SPEC v1.1 dropped the roles
+            // table), so it is already part of the user JSON - no relation to load.
+            'user'         => $user,
         ]);
     }
 
@@ -62,6 +65,6 @@ class AuthController extends Controller
      */
     public function me(Request $request): JsonResponse
     {
-        return response()->json($request->user()->load('role'));
+        return response()->json($request->user());
     }
 }

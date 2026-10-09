@@ -12,19 +12,24 @@ use App\Models\StockTransaction;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 /**
  * Two-phase stock handling:
  *
  *   place()   Trigger 1 - reserve: reserved_qty += qty            (quantity_on_hand untouched)
  *   fulfil()  Trigger 2 - deduct:  quantity_on_hand -= qty AND reserved_qty -= qty
+ *   cancel()  release:             reserved_qty -= qty            (quantity_on_hand untouched)
  *
  * Everything that reads-then-writes a batch does so inside DB::transaction()
  * with lockForUpdate(), so two requests can never both act on the same unit.
  */
 class OrderService
 {
-    public function __construct(private readonly FefoBatchSelector $fefo) {}
+    public function __construct(
+        private readonly FefoBatchSelector $fefo,
+        private readonly ReorderAlertService $reorderAlerts,
+    ) {}
 
     /**
      * Trigger 1 - Sale Reservation.
@@ -33,7 +38,7 @@ class OrderService
      */
     public function place(User $user, int $itemId, int $quantity): Order
     {
-        return DB::transaction(function () use ($user, $itemId, $quantity): Order {
+        $order = DB::transaction(function () use ($user, $itemId, $quantity): Order {
             // Locks the eligible batch rows (FOR UPDATE) and throws if the FEFO
             // batch cannot cover the quantity, i.e. if reserving would take
             // available_qty below zero. Throwing rolls the transaction back.
@@ -56,6 +61,10 @@ class OrderService
                 'quantity' => $quantity,
             ]);
         });
+
+        $this->runReorderCheck($itemId);
+
+        return $order;
     }
 
     /**
@@ -89,7 +98,7 @@ class OrderService
      */
     public function fulfil(User $user, int $orderId): Order
     {
-        return DB::transaction(function () use ($user, $orderId): Order {
+        $fulfilled = DB::transaction(function () use ($user, $orderId): Order {
             $order = $this->lockOrder($orderId);
             $this->assertCanMove($order, OrderStatus::Fulfilled);
 
@@ -122,6 +131,67 @@ class OrderService
 
             return $order;
         });
+
+        $this->runReorderCheck($fulfilled->item_id);
+
+        return $fulfilled;
+    }
+
+    /**
+     * Cancel an order and release its reservation: reserved_qty -= qty.
+     * quantity_on_hand is untouched - the stock never left the building.
+     * Logged as type 'cancellation' (NOT 'adjustment', which would pollute the
+     * FR-23 shrinkage report).
+     *
+     * @throws OrderNotFoundException (-> 404 NOT_FOUND)
+     * @throws InvalidOrderTransitionException (-> 409 ALREADY_FULFILLED / ORDER_CANCELLED)
+     * @throws StockIntegrityException (-> 500, nothing written)
+     */
+    public function cancel(User $user, int $orderId): Order
+    {
+        return DB::transaction(function () use ($user, $orderId): Order {
+            $order = $this->lockOrder($orderId);
+            $this->assertCanMove($order, OrderStatus::Cancelled);
+
+            /** @var Batch $batch */
+            $batch = Batch::query()->whereKey($order->batch_id)->lockForUpdate()->firstOrFail();
+
+            if ($batch->reserved_qty < $order->quantity) {
+                Log::critical('Stock integrity anomaly while cancelling order', [
+                    'order_id' => $order->id,
+                    'batch_id' => $batch->id,
+                    'order_quantity' => $order->quantity,
+                    'reserved_qty' => $batch->reserved_qty,
+                ]);
+
+                throw new StockIntegrityException("Cannot cancel order {$order->id}: batch {$batch->id} reserved_qty would go negative.");
+            }
+
+            $batch->reserved_qty -= $order->quantity;
+            $batch->last_updated = now();
+            $batch->save();
+
+            StockTransaction::recordTransaction($batch->id, $user->id, 'cancellation', -$order->quantity);
+
+            $order->status = OrderStatus::Cancelled;
+            $order->save();
+
+            return $order;
+        });
+    }
+
+    /**
+     * FR-18 runs after the stock transaction has committed. A failure here is
+     * logged but never surfaced: the order/fulfilment is already real, and
+     * telling the user it failed would invite a duplicate retry.
+     */
+    private function runReorderCheck(int $itemId): void
+    {
+        try {
+            $this->reorderAlerts->checkItem($itemId);
+        } catch (Throwable $e) {
+            Log::error('Reorder alert check failed', ['item_id' => $itemId, 'error' => $e->getMessage()]);
+        }
     }
 
     /**
