@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\FulfillmentController;
 use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\OrderController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ReorderController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -52,4 +54,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/orders/{order}/confirm', [OrderController::class, 'confirm'])->whereNumber('order'); // pending -> confirmed
     Route::put('/orders/{order}/fulfil', FulfillmentController::class)->whereNumber('order'); // Trigger 2: deduct
     Route::put('/orders/{order}/cancel', [OrderController::class, 'cancel'])->whereNumber('order'); // release reservation
+
+    // (Sprint 4) - Reorder & Seasonal ROP Calculations
+    Route::post('/rop/standard', [ReorderController::class, 'calculateStandard']);
+    Route::post('/rop/seasonal', [ReorderController::class, 'calculateSeasonal']);
+    Route::get('/alerts/dashboard', [ReorderController::class, 'dashboardAlerts']);
+    Route::get('/seasonal-factor', [ReorderController::class, 'getSeasonalFactor']);
 });
