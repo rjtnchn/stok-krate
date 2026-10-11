@@ -66,23 +66,23 @@
    - Columns: `id`, `batch_id FK → batches.id`, `user_id FK → users.id`, `type VARCHAR(20)`, `quantity INT`, `created_at`
    - Valid types: `receipt`, `reservation`, `fulfillment`, `adjustment`, `cancellation`   
 
-7. `[ ]` Create `User` Eloquent model — SETUP — **BD1** 
+7. `[ / ]` Create `User` Eloquent model — SETUP — **BD1** 
    - `$fillable`: name, email, password_hash, role, deactivated_at
    - `$hidden`: password_hash
    - Accessor: `isAdmin()` helper returning `$this->role === 'Admin'`
    - Relationships: `hasMany(Order::class)`, `hasMany(StockTransaction::class)`
 
-8. `[ ]` Create `Item` Eloquent model — SETUP — **BD2** 
+8. `[ / ]` Create `Item` Eloquent model — SETUP — **BD2** 
    - `$fillable`: all item fields
    - Relationships: `hasMany(Batch::class)`, `hasMany(Order::class)`, `hasMany(Alert::class)`
 
-9. `[ ]` Create `Batch` Eloquent model with `available_qty` accessor — FR-07 — **BD1** 
+9. `[ / ]` Create `Batch` Eloquent model with `available_qty` accessor — FR-07 — **BD1** 
    - `$fillable`: item_id, lot_number, quantity_on_hand, reserved_qty, received_date, expiry_date
    - Accessor: `getAvailableQtyAttribute()` returns `$this->quantity_on_hand - $this->reserved_qty`
    - Confirm: no `available_qty` in `$fillable` and no migration column
    - Relationships: `belongsTo(Item::class)`, `hasMany(StockTransaction::class)`, `hasMany(Alert::class)`
 
-10. `[ ]` Create `Order`, `StockTransaction`, `Alert` Eloquent models — SETUP — **BD2** 
+10. `[ / ]` Create `Order`, `StockTransaction`, `Alert` Eloquent models — SETUP — **BD2** 
     - `Order`: `$fillable` all columns; `belongsTo(User::class)`, `belongsTo(Item::class)`, `belongsTo(Batch::class)`
     - `StockTransaction`: `$fillable` all columns; immutable (override `save()` to block updates if `$this->exists`)
     - `Alert`: `$fillable` all columns; `belongsTo(Item::class)`, `belongsTo(Batch::class)`, `belongsTo(User::class, 'resolved_by')`

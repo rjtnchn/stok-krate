@@ -1,111 +1,168 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+@import "tailwindcss";
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+/* ===========================================================================
+   Warehouse Signal Ledger
+   ---------------------------------------------------------------------------
+   Graphite shell (nav chrome) against warm neutral content surfaces. Colour
+   carries operational meaning and nothing else:
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+     teal   — primary actions, active navigation, successful operations
+     amber  — approaching reorder point / expiry, pending attention, FEFO watch
+     rust   — stockouts, expired batches, failures, destructive actions
+     steel  — timestamps, reserved quantities, supporting metadata
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
+   Anything that is merely "normal" stays neutral. Every text/background pair
+   below is checked against WCAG AA (see the contrast audit in the verify step).
+   =========================================================================== */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+@theme {
+  --font-display: "Archivo", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+  /* --- Application shell: graphite chrome ------------------------------- */
+  --color-shell: #15191b;
+  --color-shell-2: #1e2427;
+  --color-shell-3: #272e31;
+  --color-shell-line: #333b3e;
+  --color-onshell: #e8e6e0;
+  --color-onshell-dim: #a1abae;
+
+  /* --- Content surfaces: warm neutral gray ----------------------------- */
+  --color-paper: #eceae4;
+  --color-paper-dim: #e0ddd5;
+  --color-line: #d8d4cb;
+  --color-line-strong: #c2bdb1;
+
+  --color-ink: #16191b;
+  --color-ink-soft: #2b3134;
+  --color-steel: #565f63;
+  --color-steel-soft: #6d7679;
+
+  /* --- Teal: primary action / active / success -------------------------- */
+  /* signal carries white text, so it is darkened to clear AA. */
+  --color-signal: #0c6d5c;
+  --color-signal-dim: #085546;
+  /* Non-text accents only: active rails, brand mark, focus rings. */
+  --color-signal-bright: #17a68d;
+  --color-teal: #095f4f;
+  --color-teal-bg: #dff0ec;
+
+  /* --- Amber: warning / approaching threshold -------------------------- */
+  --color-amber: #7d4e00;
+  --color-amber-bright: #d98416;
+  --color-amber-bg: #fbeed8;
+
+  /* --- Rust: critical / expired / destructive --------------------------- */
+  --color-rust: #a32d19;
+  --color-rust-dim: #8a2614;
+  --color-rust-bg: #fae4df;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
 }
 
 body {
-  margin: 0;
+  font-family: var(--font-body);
+  background: var(--color-paper);
+  color: var(--color-ink);
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+.font-display {
+  font-family: var(--font-display);
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+.font-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+/* Codes (SKU, lot) must never break across lines — they stop being scannable. */
+.code {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Quantities align on the decimal so columns read as a ledger. */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Visible keyboard focus everywhere, on both shell and content surfaces. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-signal-bright);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   Motion. Four deliberate moments only: the Check Now result banner, its
+   staggered Sf lines, loading skeletons, and the FEFO priority badge.
+   All are disabled under prefers-reduced-motion at the bottom of this block.
+   --------------------------------------------------------------------------- */
+
+@keyframes banner-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
-p {
-  margin: 0;
+
+/* Slow teal ring — readable as "this lot is next" without pulling the eye
+   away from whoever is presenting. */
+@keyframes fefo-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(23 166 141 / 0.5);
+  }
+
+  50% {
+    box-shadow: 0 0 0 5px rgb(23 166 141 / 0);
+  }
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+.animate-banner-in {
+  animation: banner-in 260ms ease-out both;
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+.animate-fade-in {
+  animation: fade-in 260ms ease-out both;
+}
+
+.animate-fefo-pulse {
+  animation: fefo-pulse 2.4s ease-in-out infinite;
+}
+
+.animate-skeleton {
+  animation: fade-in 200ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .animate-banner-in,
+  .animate-fade-in,
+  .animate-fefo-pulse,
+  .animate-skeleton,
+  .animate-pulse {
+    animation: none;
+  }
 }

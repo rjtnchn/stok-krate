@@ -41,3 +41,27 @@ It should print a local URL, typically:
 http://localhost:5173
 ```
 Open it in your browser to confirm the app loads.
+
+## Source structure
+
+```text
+src/
+├── app/          # Application shell and route composition
+├── api/          # API client, auth context, and mock transport
+├── components/   # Reusable UI primitives and layout components
+│   ├── common/
+│   ├── layout/
+│   └── ui/
+├── features/     # Domain-focused screens, components, and hooks
+│   ├── alerts/
+│   ├── auth/
+│   ├── dashboard/
+│   ├── inventory/
+│   ├── orders/
+│   ├── reports/
+│   └── users/
+└── lib/          # Shared, domain-independent helpers
+```
+
+Use the `@/` alias for imports that cross folder boundaries. Relative imports are
+reserved for modules colocated within the same feature or component folder.
