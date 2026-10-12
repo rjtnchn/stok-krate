@@ -9,12 +9,8 @@ import { BrandMark } from "@/components/layout/BrandMark";
 import { Button } from "@/components/ui/button";
 import { Input, Field, Label } from "@/components/ui/input";
 
-// Set to false once the backend + POST /api/auth/login exist, to remove these
-// buttons from the login screen entirely.
-const SHOW_DEV_BYPASS = true;
-
 export default function LoginPage() {
-  const { login, setDevRole } = useCurrentUser();
+  const { login, } = useCurrentUser();
   const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
@@ -34,11 +30,6 @@ export default function LoginPage() {
     } finally {
       setSubmitting(false);
     }
-  }
-
-  function handleDevBypass(role) {
-    setDevRole(role);
-    navigate("/", { replace: true });
   }
 
   return (
@@ -106,33 +97,6 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          {SHOW_DEV_BYPASS && (
-            <div className="mt-4 border-t border-line pt-3.5">
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1"
-                  onClick={() => handleDevBypass("admin")}
-                >
-                  Demo: Admin
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1"
-                  onClick={() => handleDevBypass("staff")}
-                >
-                  Demo: Staff
-                </Button>
-              </div>
-              <p className="mt-2.5 text-center text-[11px] leading-relaxed text-steel-soft">
-                <span className="code">admin@wb.com</span> / <span className="code">admin123</span>
-                <br />
-                <span className="code">staff@wb.com</span> / <span className="code">staff123</span>
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </div>

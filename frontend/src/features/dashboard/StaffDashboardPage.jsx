@@ -16,7 +16,6 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, THead, TBody, Tr, Th, EmptyState } from "@/components/ui/table";
 import { TableSkeleton, ListSkeleton } from "@/components/ui/skeleton";
 
-
 function Section({ title, meta, children, className }) {
   return (
     <Card className={`mb-4 ${className ?? ""}`}>
