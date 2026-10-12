@@ -4,8 +4,6 @@
 // FEFO warnings come next, then shortcuts, then personal activity last.
 
 import { useEffect, useState, useCallback } from "react";
-import { Link } from "react-router-dom";
-import { PackagePlus, Truck, ChevronRight } from "lucide-react";
 import { api } from "@/api/client";
 import { RoleGuard } from "@/api/auth";
 import OrderRow from "@/features/orders/OrderRow";
@@ -18,28 +16,6 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, THead, TBody, Tr, Th, EmptyState } from "@/components/ui/table";
 import { TableSkeleton, ListSkeleton } from "@/components/ui/skeleton";
 
-const SHORTCUTS = [
-  { to: "/orders/new", label: "Place order", description: "Reserve stock by FEFO", icon: PackagePlus },
-  { to: "/receive", label: "Receive stock", description: "Log an incoming batch", icon: Truck },
-];
-
-function Shortcut({ to, label, description, icon: Icon }) {
-  return (
-    <Link
-      to={to}
-      className="flex items-center gap-2.5 rounded-lg border border-line bg-white px-3 py-2 hover:border-line-strong hover:bg-paper/60"
-    >
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-paper-dim text-steel">
-        <Icon size={14} aria-hidden="true" />
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="block truncate text-[13px] font-semibold text-ink">{label}</span>
-        <span className="block truncate text-[11px] text-steel">{description}</span>
-      </span>
-      <ChevronRight size={14} className="shrink-0 text-steel-soft" aria-hidden="true" />
-    </Link>
-  );
-}
 
 function Section({ title, meta, children, className }) {
   return (
@@ -240,12 +216,7 @@ function StaffDashboardPageInner() {
         )}
       </Section>
 
-      {/* 3 — Shortcuts */}
-      <div className="mb-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-        {SHORTCUTS.map((shortcut) => (
-          <Shortcut key={shortcut.to} {...shortcut} />
-        ))}
-      </div>
+      
 
       {/* 4 — Personal activity last */}
       <Section title="My recent activity">

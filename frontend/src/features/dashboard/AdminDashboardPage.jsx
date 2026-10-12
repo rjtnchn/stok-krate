@@ -1,19 +1,8 @@
 // FR-25 — operational working surface. Hierarchy is deliberate and identical at
 // every width: heading + Check now, KPI strip, what needs attention, shortcuts,
 // then recent activity. Alerts never sit below the activity history.
-
+import { AlertTriangle, CalendarClock, Boxes } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
-import { Link } from "react-router-dom";
-import {
-  AlertTriangle,
-  CalendarClock,
-  Boxes,
-  ClipboardList,
-  BarChart3,
-  TrendingDown,
-  Truck,
-  ChevronRight,
-} from "lucide-react";
 import { api } from "@/api/client";
 import { RoleGuard } from "@/api/auth";
 import CheckNowButton from "@/features/alerts/CheckNowButton";
@@ -54,31 +43,6 @@ function KpiCard({ icon: Icon, value, label, tone }) {
         <div className="mt-0.5 truncate text-[11px] text-steel">{label}</div>
       </div>
     </div>
-  );
-}
-
-const SHORTCUTS = [
-  { to: "/orders", label: "Orders", description: "Reserve, fulfil, cancel", icon: ClipboardList },
-  { to: "/receive", label: "Receive stock", description: "Log a delivery", icon: Truck },
-  { to: "/admin/reports/stock-levels", label: "Stock levels", description: "On hand vs ROP", icon: BarChart3 },
-  { to: "/admin/reports/shrinkage", label: "Shrinkage", description: "Recorded adjustments", icon: TrendingDown },
-];
-
-function Shortcut({ to, label, description, icon: Icon }) {
-  return (
-    <Link
-      to={to}
-      className="flex items-center gap-2.5 rounded-lg border border-line bg-white px-3 py-2 hover:border-line-strong hover:bg-paper/60"
-    >
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-paper-dim text-steel">
-        <Icon size={14} aria-hidden="true" />
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="block truncate text-[13px] font-semibold text-ink">{label}</span>
-        <span className="block truncate text-[11px] text-steel">{description}</span>
-      </span>
-      <ChevronRight size={14} className="shrink-0 text-steel-soft" aria-hidden="true" />
-    </Link>
   );
 }
 
@@ -212,13 +176,6 @@ function AdminDashboardPageInner() {
           <AlertsPreviewPanel reorderAlerts={reorderAlerts} expiryAlerts={expiryAlerts} />
         )}
       </Section>
-
-      {/* 3 — Shortcuts */}
-      <div className="mb-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
-        {SHORTCUTS.map((shortcut) => (
-          <Shortcut key={shortcut.to} {...shortcut} />
-        ))}
-      </div>
 
       {/* 4 — Recent activity, last */}
       <Section title="Recent stock activity">
