@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Item extends Model
@@ -74,5 +75,16 @@ class Item extends Model
     public function getTotalReservedQtyAttribute(): int
     {
         return (int) $this->batches()->sum('reserved_qty');
+    }
+
+    /**
+     * Filter by ABC turnover class ('A', 'B' or 'C'). This is the `category=A|B|C`
+     * report filter - NOT the free-text `items.category` column.
+     *
+     * @param  Builder<Item>  $query
+     */
+    public function scopeTurnoverCategory(Builder $query, string $class): void
+    {
+        $query->where($query->getModel()->getTable().'.turnover_category', strtoupper($class));
     }
 }

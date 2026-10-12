@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -58,5 +59,17 @@ class Alert extends Model
     public function resolver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'resolved_by');
+    }
+
+    /** @param  Builder<Alert>  $query */
+    public function scopeExpiryWarnings(Builder $query): void
+    {
+        $query->where($query->getModel()->getTable().'.alert_type', self::TYPE_EXPIRY);
+    }
+
+    /** @param  Builder<Alert>  $query */
+    public function scopeUnresolved(Builder $query): void
+    {
+        $query->where($query->getModel()->getTable().'.resolved', false);
     }
 }
