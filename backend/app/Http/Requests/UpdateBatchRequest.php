@@ -18,6 +18,16 @@ class UpdateBatchRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('quantity') && !$this->has('quantity_on_hand')) {
+            $this->merge(['quantity_on_hand' => $this->input('quantity')]);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, ValidationRule|array<mixed>|string>
