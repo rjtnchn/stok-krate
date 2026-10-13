@@ -11,12 +11,12 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const ROLES = [
-  { value: "staff", label: "Staff", description: "Places and fulfils orders" },
-  { value: "admin", label: "Admin", description: "Full system access" },
+  { value: "Staff", label: "Staff", description: "Places and fulfils orders" },
+  { value: "Admin", label: "Admin", description: "Full system access" },
 ];
 
 export default function AddUserPanel() {
-  const [form, setForm] = useState({ name: "", username: "", role: "staff" });
+  const [form, setForm] = useState({ name: "", username: "", role: "Staff" });
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -33,7 +33,7 @@ export default function AddUserPanel() {
 
     if (Object.keys(nextErrors).length === 0) {
       setSubmitted(true);
-      setForm({ name: "", username: "", role: "staff" });
+      setForm({ name: "", username: "", role: "Staff" });
     }
   }
 

@@ -212,7 +212,7 @@ function EditItemFormInner() {
 
 export default function EditItemForm() {
   return (
-    <RoleGuard allow={["admin"]}>
+    <RoleGuard allow={["Admin"]}>
       <EditItemFormInner />
     </RoleGuard>
   );

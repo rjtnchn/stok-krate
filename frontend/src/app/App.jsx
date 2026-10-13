@@ -29,8 +29,8 @@ function HomeRedirect() {
   const { role, isLoading } = useCurrentUser();
 
   if (isLoading) return <p className="p-6 text-sm text-steel">Loading…</p>;
-  if (role === "admin") return <Navigate to="/admin/dashboard" replace />;
-  if (role === "staff") return <Navigate to="/staff/dashboard" replace />;
+  if (role === "Admin") return <Navigate to="/admin/dashboard" replace />;
+  if (role === "Staff") return <Navigate to="/staff/dashboard" replace />;
   return <Navigate to="/login" replace />;
 }
 

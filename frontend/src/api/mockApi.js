@@ -260,11 +260,11 @@ let shrinkageEntries = [
   { id: makeId(), item_name: "Air Purifier - Compact", lot_number: "P-3042", user_name: "Ana Cruz", transaction_type: "adjustment", quantity: 3, created_at: "2026-08-28T15:40:00Z" },
 ];
 
-// Demo accounts — the only credentials login() accepts. Anything else is
-// rejected with 401 INVALID_CREDENTIALS (FR-01b).
+// Demo accounts mirror the credentials created by the Laravel seeder.
+// Anything else is rejected with 401 INVALID_CREDENTIALS (FR-01b).
 const DEMO_USERS = [
-  { id: 1, name: "Site Admin", email: "admin@wb.com", password: "admin123", role: "admin" },
-  { id: 2, name: "Juan Garcia", email: "staff@wb.com", password: "staff123", role: "staff" },
+  { id: 1, name: "Admin", email: "admin@walangbrownout.ph", password: "password", role: "Admin" },
+  { id: 2, name: "Staff", email: "staff@walangbrownout.ph", password: "password", role: "Staff" },
 ];
 
 // A fake "logged in" session, set by login().

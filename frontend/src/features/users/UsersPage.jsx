@@ -18,7 +18,7 @@ const TABS = [
 
 export default function UsersPage() {
   return (
-    <RoleGuard allow={["admin"]}>
+    <RoleGuard allow={["Admin"]}>
       <div>
         <PageHeader
           title="Users"

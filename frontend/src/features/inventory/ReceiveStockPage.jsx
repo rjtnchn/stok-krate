@@ -98,7 +98,7 @@ function ReceiveStockPageInner() {
 
 export default function ReceiveStockPage() {
   return (
-    <RoleGuard allow={["admin", "staff"]}>
+    <RoleGuard allow={["Admin", "Staff"]}>
       <ReceiveStockPageInner />
     </RoleGuard>
   );

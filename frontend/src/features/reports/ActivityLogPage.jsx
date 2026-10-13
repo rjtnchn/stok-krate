@@ -69,7 +69,7 @@ function ActivityLogPageInner() {
 
 export default function ActivityLogPage() {
   return (
-    <RoleGuard allow={["admin"]}>
+    <RoleGuard allow={["Admin"]}>
       <ActivityLogPageInner />
     </RoleGuard>
   );

@@ -27,7 +27,7 @@ import { BrandLockup } from "./BrandMark";
 import { cn } from "@/lib/utils";
 
 const NAV_SECTIONS = {
-  admin: [
+  Admin: [
     {
       label: "Overview",
       links: [
@@ -67,7 +67,7 @@ const NAV_SECTIONS = {
       ],
     },
   ],
-  staff: [
+  Staff: [
     {
       label: "Overview",
       links: [{ to: "/staff/dashboard", label: "My dashboard", icon: LayoutDashboard }],

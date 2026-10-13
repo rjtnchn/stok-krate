@@ -23,7 +23,7 @@ const TABS = [
 
 export default function ItemsPage() {
   return (
-    <RoleGuard allow={["admin"]}>
+    <RoleGuard allow={["Admin"]}>
       <div>
         <PageHeader
           title="Items & batches"

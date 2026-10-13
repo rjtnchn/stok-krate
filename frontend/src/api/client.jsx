@@ -15,7 +15,7 @@ import { mockApi } from "./mockApi";
 // To switch to the real backend: set this to false. Nothing else in the
 // app needs to change — every component calls api.* the same way either
 // way. You can delete mockApi.js at that point too.
-const USE_MOCK_DATA = true;
+const USE_MOCK_DATA = false;
 // ============================================================================
 
 const API_BASE = "/api";
@@ -35,6 +35,11 @@ function readCookie(name) {
 async function request(path, options = {}) {
   const method = (options.method || "GET").toUpperCase();
   const headers = { "Content-Type": "application/json", ...options.headers };
+
+  const token = sessionStorage.getItem("auth_token");
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
 
   if (MUTATING_METHODS.has(method)) {
     const csrfToken = readCookie("csrftoken");
@@ -120,9 +125,20 @@ const realApi = {
     request(`/reports/recent-transactions?limit=${limit}`),
 
   getCurrentUser: () => request("/auth/me"),
-  login: (credentials) =>
-    request("/auth/login", { method: "POST", body: JSON.stringify(credentials) }),
-  logout: () => request("/auth/logout", { method: "POST" }),
+  login: async (credentials) => {
+    const res = await request("/auth/login", { method: "POST", body: JSON.stringify(credentials) });
+    if (res?.token) {
+      sessionStorage.setItem("auth_token", res.token);
+    }
+    return res;
+  },
+  logout: async () => {
+    try {
+      await request("/auth/logout", { method: "POST" });
+    } finally {
+      sessionStorage.removeItem("auth_token");
+    }
+  },
 };
 
 export const api = USE_MOCK_DATA ? mockApi : realApi;

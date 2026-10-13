@@ -9,11 +9,11 @@ import { Badge } from "@/components/ui/badge";
 import { Table, THead, TBody, Tr, Th, Td } from "@/components/ui/table";
 
 const SAMPLE_USERS = [
-  { id: 1, username: "jgarcia", name: "Juan Garcia", role: "staff", status: "active" },
-  { id: 2, username: "mreyes", name: "Maria Reyes", role: "staff", status: "active" },
-  { id: 3, username: "acruz", name: "Ana Cruz", role: "staff", status: "active" },
-  { id: 4, username: "admin", name: "Site Admin", role: "admin", status: "active" },
-  { id: 5, username: "dsantos", name: "Diego Santos", role: "staff", status: "inactive" },
+  { id: 1, username: "jgarcia", name: "Juan Garcia", role: "Staff", status: "active" },
+  { id: 2, username: "mreyes", name: "Maria Reyes", role: "Staff", status: "active" },
+  { id: 3, username: "acruz", name: "Ana Cruz", role: "Staff", status: "active" },
+  { id: 4, username: "admin", name: "Site Admin", role: "Admin", status: "active" },
+  { id: 5, username: "dsantos", name: "Diego Santos", role: "Staff", status: "inactive" },
 ];
 
 export default function UserListPanel() {
@@ -34,7 +34,7 @@ export default function UserListPanel() {
               <Td className="font-medium">{user.name}</Td>
               <Td className="code text-[12px] text-steel">{user.username}</Td>
               <Td>
-                <Badge tone={user.role === "admin" ? "ink" : "neutral"} className="capitalize">
+                <Badge tone={user.role === "Admin" ? "ink" : "neutral"} className="capitalize">
                   {user.role}
                 </Badge>
               </Td>

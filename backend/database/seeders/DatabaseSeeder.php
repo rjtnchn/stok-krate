@@ -10,19 +10,19 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::firstOrCreate(
-            ['email' => 'admin@walangbrownout.ph'],
+            ['email' => 'admin@wb.com'],
             [
                 'name' => 'Admin User',
-                'password' => bcrypt('password'),
+                'password' => bcrypt('admin123'),
                 'role' => 'Admin',
             ]
         );
 
         User::firstOrCreate(
-            ['email' => 'staff@walangbrownout.ph'],
+            ['email' => 'staff@wb.com'],
             [
                 'name' => 'Staff User',
-                'password' => bcrypt('password'),
+                'password' => bcrypt('staff123'),
                 'role' => 'Staff',
             ]
         );

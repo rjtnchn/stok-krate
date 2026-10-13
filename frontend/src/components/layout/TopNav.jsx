@@ -207,7 +207,7 @@ export default function TopNav({ navOpen = false, onToggleNav, menuButtonRef }) 
   const [alertCount, setAlertCount] = useState(0);
 
   const loadAlertCount = useCallback(async () => {
-    if (role !== "admin") return;
+    if (role !== "Admin") return;
     try {
       const [reorder, expiry] = await Promise.all([
         api.getReorderAlerts(false),
@@ -244,7 +244,7 @@ export default function TopNav({ navOpen = false, onToggleNav, menuButtonRef }) 
       <div className="ml-auto flex items-center gap-2">
         <QuickJumpSearch role={role} />
 
-        {role === "admin" && (
+        {role === "Admin" && (
           <NavLink
             to="/admin/alerts"
             className={cn(

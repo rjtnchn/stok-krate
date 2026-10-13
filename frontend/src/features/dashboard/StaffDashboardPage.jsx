@@ -238,7 +238,7 @@ function StaffDashboardPageInner() {
 
 export default function StaffDashboardPage() {
   return (
-    <RoleGuard allow={["staff", "admin"]}>
+    <RoleGuard allow={["Staff", "Admin"]}>
       <StaffDashboardPageInner />
     </RoleGuard>
   );

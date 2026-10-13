@@ -98,7 +98,7 @@ function StockLevelsReportPageInner() {
 
 export default function StockLevelsReportPage() {
   return (
-    <RoleGuard allow={["admin"]}>
+    <RoleGuard allow={["Admin"]}>
       <StockLevelsReportPageInner />
     </RoleGuard>
   );

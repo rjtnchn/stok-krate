@@ -315,7 +315,7 @@ function AlertsListPageInner() {
 
 export default function AlertsListPage() {
   return (
-    <RoleGuard allow={["admin"]}>
+    <RoleGuard allow={["Admin"]}>
       <AlertsListPageInner />
     </RoleGuard>
   );

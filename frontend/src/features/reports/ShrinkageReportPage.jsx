@@ -95,7 +95,7 @@ function ShrinkageReportPageInner() {
 
 export default function ShrinkageReportPage() {
   return (
-    <RoleGuard allow={["admin"]}>
+    <RoleGuard allow={["Admin"]}>
       <ShrinkageReportPageInner />
     </RoleGuard>
   );

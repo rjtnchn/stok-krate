@@ -202,7 +202,7 @@ function AdminDashboardPageInner() {
 
 export default function AdminDashboardPage() {
   return (
-    <RoleGuard allow={["admin"]}>
+    <RoleGuard allow={["Admin"]}>
       <AdminDashboardPageInner />
     </RoleGuard>
   );

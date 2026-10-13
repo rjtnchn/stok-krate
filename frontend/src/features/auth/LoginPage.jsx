@@ -13,7 +13,7 @@ export default function LoginPage() {
   const { login, } = useCurrentUser();
   const navigate = useNavigate();
 
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -23,7 +23,7 @@ export default function LoginPage() {
     setError(null);
     setSubmitting(true);
     try {
-      await login({ username, password });
+      await login({ email, password });
       navigate("/", { replace: true });
     } catch (err) {
       setError(getErrorMessage(err, "Couldn't log in. Check your email and password."));
@@ -52,14 +52,14 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} noValidate>
             <Field>
-              <Label htmlFor="username">Email</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                autoComplete="username"
-                placeholder="admin@wb.com"
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                placeholder="example@email.com"
                 aria-invalid={error ? true : undefined}
                 aria-describedby={error ? "login-error" : undefined}
                 required
