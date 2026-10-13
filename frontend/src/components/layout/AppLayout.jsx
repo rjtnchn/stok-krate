@@ -3,15 +3,27 @@
 // state and the menu-button ref so focus can return there on close.
 
 import { useRef, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, Navigate } from "react-router-dom";
 import { useCurrentUser } from "@/api/auth";
 import TopNav from "./TopNav";
 import SideNav from "./SideNav";
 
 export default function AppLayout() {
-  const { role } = useCurrentUser();
+  const { role, isLoading } = useCurrentUser();
   const [navOpen, setNavOpen] = useState(false);
   const menuButtonRef = useRef(null);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-paper">
+        <p className="text-sm text-steel">Loading session…</p>
+      </div>
+    );
+  }
+
+  if (!role) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-paper">

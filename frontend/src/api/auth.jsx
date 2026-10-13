@@ -34,12 +34,18 @@ export function useCurrentUser() {
 // already works independently of this.
 export function AuthProvider({ children }) {
   const [role, setRole] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(() => !!sessionStorage.getItem("auth_token"));
 
   useEffect(() => {
     let cancelled = false;
 
     async function loadSession() {
+      const token = sessionStorage.getItem("auth_token");
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const me = await api.getCurrentUser();
         if (!cancelled) setRole(me?.role ?? null);
