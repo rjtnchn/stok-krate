@@ -9,6 +9,8 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\ReorderController as ReorderController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ReorderController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -56,22 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/orders/{order}/fulfil', FulfillmentController::class)->whereNumber('order'); // Trigger 2: deduct
     Route::put('/orders/{order}/cancel', [OrderController::class, 'cancel'])->whereNumber('order'); // release reservation
 
-    // (Sprint 5) - Admin-only: reports + user management.
-    // `admin` = EnsureAdmin: 403 { error: FORBIDDEN } for Staff, 403 for deactivated accounts.
-    Route::middleware('admin')->group(function () {
-        Route::prefix('reports')->group(function () {
-            Route::get('/stock', [ReportController::class, 'stock']);                 // ?category=A|B|C
-            Route::get('/shrinkage', [ReportController::class, 'shrinkage']);         // ?from=&to=
-            Route::get('/expiry-risks', [ReportController::class, 'expiryRisks']);    // from alerts table
-            Route::get('/activity-log', [ReportController::class, 'activityLog']);    // audit trail
-        });
-
-        Route::prefix('admin')->group(function () {
-            Route::apiResource('users', UserController::class)
-                ->whereNumber('user');                                                // index/show/store/update/destroy
-        });
-    });
-
+    // (Sprint 4) - Reorder & Seasonal ROP Calculations
     Route::post('/rop/standard', [ReorderController::class, 'calculateStandard']);
     Route::post('/rop/seasonal', [ReorderController::class, 'calculateSeasonal']);
     Route::get('/alerts/dashboard', [ReorderController::class, 'dashboardAlerts']);
