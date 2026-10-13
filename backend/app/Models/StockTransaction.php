@@ -4,11 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class StockTransaction extends Model
 {
     use HasFactory;
+
+    /** Manual stock correction (physical count != recorded). Signed delta = physical - recorded. */
+    public const TYPE_ADJUSTMENT = 'adjustment';
+
+    /** Types that record stock coming in (Sprint 2 writes 'add'; SPEC.md calls it 'receipt'). */
+    public const RECEIPT_TYPES = ['add', 'receipt'];
 
     /**
      * The table associated with the model.
@@ -79,5 +86,16 @@ class StockTransaction extends Model
             'type' => $type,
             'quantity' => $quantity,
         ]);
+    }
+
+    /**
+     * Only manual adjustments (FR-23). Cancellations, reservations and fulfilments
+     * are deliberately NOT adjustments, so they never pollute the shrinkage report.
+     *
+     * @param  Builder<StockTransaction>  $query
+     */
+    public function scopeAdjustments(Builder $query): void
+    {
+        $query->where($query->getModel()->getTable().'.type', self::TYPE_ADJUSTMENT);
     }
 }

@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\UserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BatchController;
 use App\Http\Controllers\Api\FulfillmentController;
 use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\ReorderController as ReorderController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReorderController;
 
@@ -49,8 +52,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Orders (Sprint 3) - any authenticated role
-    Route::get('/orders', [OrderController::class, 'index']);                  // Admin: all, Staff: own
-    Route::post('/orders', [OrderController::class, 'store']);                 // Trigger 1: reserve (FEFO)
+    Route::get('/orders', [OrderController::class, 'index']);              // Admin: all, Staff: own
+    Route::post('/orders', [OrderController::class, 'store']);             // Trigger 1: reserve (FEFO)
     Route::put('/orders/{order}/confirm', [OrderController::class, 'confirm'])->whereNumber('order'); // pending -> confirmed
     Route::put('/orders/{order}/fulfil', FulfillmentController::class)->whereNumber('order'); // Trigger 2: deduct
     Route::put('/orders/{order}/cancel', [OrderController::class, 'cancel'])->whereNumber('order'); // release reservation
