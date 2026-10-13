@@ -16,6 +16,17 @@ class StoreItemRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'item_name' => $this->input('item_name') ?? $this->input('name'),
+            'is_seasonal' => $this->input('is_seasonal') ?? $this->input('seasonal_flag', false),
+        ]);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, ValidationRule|array<mixed>|string>

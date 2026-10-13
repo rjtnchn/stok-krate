@@ -18,6 +18,23 @@ class UpdateItemRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        $merge = [];
+        if ($this->has('name') && !$this->has('item_name')) {
+            $merge['item_name'] = $this->input('name');
+        }
+        if ($this->has('seasonal_flag') && !$this->has('is_seasonal')) {
+            $merge['is_seasonal'] = $this->input('seasonal_flag');
+        }
+        if (!empty($merge)) {
+            $this->merge($merge);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, ValidationRule|array<mixed>|string>

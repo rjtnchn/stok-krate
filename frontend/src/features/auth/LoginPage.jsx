@@ -59,7 +59,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
-                placeholder="example@email.com"
+                placeholder="admin@wb.com"
                 aria-invalid={error ? true : undefined}
                 aria-describedby={error ? "login-error" : undefined}
                 required

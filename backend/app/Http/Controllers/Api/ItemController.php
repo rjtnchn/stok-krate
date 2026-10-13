@@ -42,8 +42,12 @@ class ItemController extends Controller
             $query->with('batches');
         }
 
-        $perPage = max(1, min(100, (int) $request->input('per_page', 15)));
-        $items = $query->latest('id')->paginate($perPage);
+        $items = $query->latest('id')->get()->map(function ($item) {
+            $arr = $item->toArray();
+            $arr['name'] = $item->item_name;
+            $arr['seasonal_flag'] = (bool) $item->is_seasonal;
+            return $arr;
+        });
 
         return response()->json($items);
     }
@@ -54,10 +58,13 @@ class ItemController extends Controller
     public function store(StoreItemRequest $request): JsonResponse
     {
         $item = Item::create($request->validated());
+        $arr = $item->toArray();
+        $arr['name'] = $item->item_name;
+        $arr['seasonal_flag'] = (bool) $item->is_seasonal;
 
         return response()->json([
             'message' => 'Item created successfully.',
-            'data' => $item,
+            'data' => $arr,
         ], 201);
     }
 
@@ -67,9 +74,12 @@ class ItemController extends Controller
     public function show(Item $item): JsonResponse
     {
         $item->load('batches');
+        $arr = $item->toArray();
+        $arr['name'] = $item->item_name;
+        $arr['seasonal_flag'] = (bool) $item->is_seasonal;
 
         return response()->json([
-            'data' => $item,
+            'data' => $arr,
         ]);
     }
 
@@ -79,10 +89,13 @@ class ItemController extends Controller
     public function update(UpdateItemRequest $request, Item $item): JsonResponse
     {
         $item->update($request->validated());
+        $arr = $item->toArray();
+        $arr['name'] = $item->item_name;
+        $arr['seasonal_flag'] = (bool) $item->is_seasonal;
 
         return response()->json([
             'message' => 'Item updated successfully.',
-            'data' => $item,
+            'data' => $arr,
         ]);
     }
 

@@ -263,8 +263,8 @@ let shrinkageEntries = [
 // Demo accounts mirror the credentials created by the Laravel seeder.
 // Anything else is rejected with 401 INVALID_CREDENTIALS (FR-01b).
 const DEMO_USERS = [
-  { id: 1, name: "Admin", email: "admin@walangbrownout.ph", password: "password", role: "Admin" },
-  { id: 2, name: "Staff", email: "staff@walangbrownout.ph", password: "password", role: "Staff" },
+  { id: 1, name: "Admin", email: "admin@wb.com", password: "admin123", role: "Admin" },
+  { id: 2, name: "Staff", email: "staff@wb.com", password: "staff123", role: "Staff" },
 ];
 
 // A fake "logged in" session, set by login().
