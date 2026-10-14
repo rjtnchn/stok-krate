@@ -5,27 +5,18 @@
 // Presentation only — FR-03 keeps user management admin-only, and the guard
 // covers both tabs from here.
 
+import { useLocation } from "react-router-dom";
 import { RoleGuard } from "@/api/auth";
-import { PageHeader } from "@/components/ui/page-header";
-import { RouteTabs } from "@/components/ui/tab-nav";
 import UserListPanel from "./UserListPage";
 import AddUserPanel from "./AddUserPage";
 
-const TABS = [
-  { key: "users", to: "/admin/users", label: "Users", element: <UserListPanel /> },
-  { key: "new", to: "/admin/users/new", label: "Add user", element: <AddUserPanel /> },
-];
-
 export default function UsersPage() {
+  const location = useLocation();
+  const isNew = location.pathname.includes("/new");
+
   return (
     <RoleGuard allow={["Admin"]}>
-      <div>
-        <PageHeader
-          title="Users"
-          description="Everyone with access to stok-krate. Demo mode — sample data."
-        />
-        <RouteTabs tabs={TABS} label="User views" />
-      </div>
+      {isNew ? <AddUserPanel /> : <UserListPanel />}
     </RoleGuard>
   );
 }

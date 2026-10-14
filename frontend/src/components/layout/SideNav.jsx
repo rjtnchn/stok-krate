@@ -160,9 +160,9 @@ export default function SideNav({ role, open = false, onClose, returnFocusRef })
         role={open ? "dialog" : undefined}
         aria-modal={open ? true : undefined}
         className={cn(
-          "w-56 shrink-0 border-r border-shell-line bg-shell md:flex md:self-stretch md:flex-col",
+          "w-56 shrink-0 border-r border-shell-line bg-shell md:sticky md:top-14 md:h-[calc(100vh-3.5rem)] md:flex md:flex-col md:overflow-y-auto",
           open
-            ? "fixed inset-y-0 left-0 z-40 flex flex-col overflow-y-auto md:static md:inset-auto md:z-auto md:overflow-visible"
+            ? "fixed inset-y-0 left-0 z-40 flex flex-col overflow-y-auto md:sticky md:top-14 md:h-[calc(100vh-3.5rem)]"
             : "hidden"
         )}
       >

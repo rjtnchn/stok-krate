@@ -50,14 +50,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/batches/{batch}', [BatchController::class, 'destroy']);
     });
 
-    // Orders (Sprint 3) - any authenticated role
+    // Orders - any authenticated role
     Route::get('/orders', [OrderController::class, 'index']);              // Admin: all, Staff: own
     Route::post('/orders', [OrderController::class, 'store']);             // Trigger 1: reserve (FEFO)
     Route::put('/orders/{order}/confirm', [OrderController::class, 'confirm'])->whereNumber('order'); // pending -> confirmed
     Route::put('/orders/{order}/fulfil', FulfillmentController::class)->whereNumber('order'); // Trigger 2: deduct
     Route::put('/orders/{order}/cancel', [OrderController::class, 'cancel'])->whereNumber('order'); // release reservation
 
-    // (Sprint 4) - Reorder & Seasonal ROP Calculations & Alerts
+    // Reorder & Seasonal ROP Calculations & Alerts
     Route::post('/rop/standard', [ReorderController::class, 'calculateStandard']);
     Route::post('/rop/seasonal', [ReorderController::class, 'calculateSeasonal']);
     Route::get('/alerts/dashboard', [ReorderController::class, 'dashboardAlerts']);
