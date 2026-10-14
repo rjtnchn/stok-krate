@@ -53,6 +53,14 @@ class User extends Authenticatable
     }
 
     /**
+     * An account is active until an Admin deactivates it (FR-03).
+     */
+    public function isActive(): bool
+    {
+        return $this->deactivated_at === null;
+    }
+
+    /**
      * Check if the user has an Admin role.
      */
     public function isAdmin(): bool

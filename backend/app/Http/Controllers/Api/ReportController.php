@@ -3,18 +3,52 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ReportActivityLogRequest;
+use App\Http\Requests\ReportExpiryRiskRequest;
+use App\Http\Requests\ReportShrinkageRequest;
+use App\Http\Requests\ReportStockRequest;
+use App\Http\Resources\ExpiryRiskResource;
+use App\Http\Resources\ShrinkageResource;
+use App\Http\Resources\StockLevelResource;
+use App\Http\Resources\TransactionResource;
+use App\Models\Alert;
 use App\Models\Batch;
 use App\Models\Order;
 use App\Models\StockTransaction;
 use App\Models\Item;
+use App\Services\Reports\ActivityAuditSummary;
+use App\Services\Reports\ShrinkageReportService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Carbon;
 
 class ReportController extends Controller
 {
-    /**
-     * FR-22: Stock levels report (one row per batch).
-     */
+    public function stock(ReportStockRequest $request): AnonymousResourceCollection
+    {
+        $batches = Batch::query()
+            ->join('items', 'items.id', '=', 'batches.item_id')
+            ->select('batches.*')
+            ->with('item')
+            ->when($request->validated('category'), fn ($q, $class) => $q->where('items.turnover_category', $class))
+            ->orderBy('items.item_name')
+            ->orderByRaw('batches.expiry_date IS NULL')
+            ->orderBy('batches.expiry_date')
+            ->orderBy('batches.lot_number')
+            ->get();
+
+        return StockLevelResource::collection($batches)->additional([
+            'summary' => [
+                'category' => $request->validated('category'),
+                'batches' => $batches->count(),
+                'total_on_hand' => (int) $batches->sum('quantity_on_hand'),
+                'total_reserved' => (int) $batches->sum('reserved_qty'),
+                'total_available' => (int) $batches->sum(fn (Batch $b) => $b->available_qty),
+            ],
+        ]);
+    }
+
     public function stockLevels(): JsonResponse
     {
         $batches = Batch::with('item')->latest('id')->get()->map(function ($batch) {
@@ -34,32 +68,36 @@ class ReportController extends Controller
         return response()->json($batches);
     }
 
-    /**
-     * FR-23: Shrinkage report (adjustments).
-     */
-    public function shrinkage(): JsonResponse
+    public function shrinkage(ReportShrinkageRequest $request, ShrinkageReportService $service): AnonymousResourceCollection
     {
-        $transactions = StockTransaction::with(['batch.item', 'user'])
-            ->where('type', 'adjustment')
-            ->latest('created_at')
-            ->get()
-            ->map(function ($tx) {
-                return [
-                    'id' => $tx->id,
-                    'item_name' => $tx->batch?->item?->item_name,
-                    'lot_number' => $tx->batch?->lot_number,
-                    'user_name' => $tx->user?->name,
-                    'quantity' => $tx->quantity,
-                    'created_at' => $tx->created_at,
-                ];
-            });
+        $report = $service->build(
+            from: $request->filled('from') ? Carbon::parse($request->input('from'))->startOfDay() : null,
+            to: $request->filled('to') ? Carbon::parse($request->input('to'))->endOfDay() : null,
+        );
 
-        return response()->json($transactions);
+        return ShrinkageResource::collection($report['rows'])->additional(['summary' => $report['summary']]);
     }
 
-    /**
-     * FR-24: Expiry risk report (lots with expiry dates, sorted by closest expiry).
-     */
+    public function expiryRisks(ReportExpiryRiskRequest $request): AnonymousResourceCollection
+    {
+        $alerts = Alert::query()
+            ->expiryWarnings()
+            ->where('alerts.resolved', $request->boolean('resolved'))
+            ->join('batches', 'batches.id', '=', 'alerts.batch_id')
+            ->select('alerts.*')
+            ->with('batch.item')
+            ->orderBy('batches.expiry_date')
+            ->orderBy('alerts.id')
+            ->get();
+
+        return ExpiryRiskResource::collection($alerts)->additional([
+            'summary' => [
+                'resolved' => $request->boolean('resolved'),
+                'count' => $alerts->count(),
+            ],
+        ]);
+    }
+
     public function expiryRisk(): JsonResponse
     {
         $batches = Batch::with('item')
@@ -81,9 +119,6 @@ class ReportController extends Controller
         return response()->json($batches);
     }
 
-    /**
-     * Dashboard summary.
-     */
     public function dashboardSummary(): JsonResponse
     {
         return response()->json([
@@ -93,9 +128,6 @@ class ReportController extends Controller
         ]);
     }
 
-    /**
-     * Recent transactions.
-     */
     public function recentTransactions(Request $request): JsonResponse
     {
         $limit = (int) $request->input('limit', 10);
@@ -116,5 +148,27 @@ class ReportController extends Controller
             });
 
         return response()->json($transactions);
+    }
+
+    public function activityLog(ReportActivityLogRequest $request, ActivityAuditSummary $summary): AnonymousResourceCollection
+    {
+        $direction = $request->input('order', 'desc');
+
+        $transactions = StockTransaction::query()
+            ->with(['batch.item', 'user'])
+            ->when($request->input('type'), fn ($q, $v) => $q->where('stock_transactions.type', $v))
+            ->when($request->input('user_id'), fn ($q, $v) => $q->where('stock_transactions.user_id', $v))
+            ->when($request->input('batch_id'), fn ($q, $v) => $q->where('stock_transactions.batch_id', $v))
+            ->when($request->input('item_id'), fn ($q, $v) => $q->whereHas('batch', fn ($b) => $b->where('item_id', $v)))
+            ->when($request->filled('from'), fn ($q) => $q->where('stock_transactions.created_at', '>=', Carbon::parse($request->input('from'))->startOfDay()))
+            ->when($request->filled('to'), fn ($q) => $q->where('stock_transactions.created_at', '<=', Carbon::parse($request->input('to'))->endOfDay()))
+            ->orderBy('stock_transactions.created_at', $direction)
+            ->orderBy('stock_transactions.id', $direction)
+            ->paginate((int) $request->input('per_page', 25))
+            ->withQueryString();
+
+        return TransactionResource::collection($transactions)->additional([
+            'summary' => $summary->build(),
+        ]);
     }
 }
