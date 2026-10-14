@@ -124,7 +124,6 @@ function AlertsListPageInner() {
     <div>
       <PageHeader
         title="Alerts"
-        description="Unresolved reorder and expiry alerts raised by the last check."
         actions={<CheckNowButton onChecked={handleCheckedNow} />}
       />
 
