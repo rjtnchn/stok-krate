@@ -64,13 +64,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/seasonal-factor', [ReorderController::class, 'getSeasonalFactor']);
     Route::get('/alerts/reorder', [ReorderController::class, 'getReorderAlerts']);
     Route::get('/alerts/expiry', [ReorderController::class, 'getExpiryAlerts']);
-    Route::middleware('role:Admin')->group(function () {
+    Route::middleware('admin')->group(function () {
         Route::post('/alerts/check-now', [ReorderController::class, 'checkNow']);
         Route::put('/alerts/{alert}/resolve', [ReorderController::class, 'resolveAlert']);
+        Route::get('/reports/stock', [ReportController::class, 'stock']);
         Route::get('/reports/stock-levels', [ReportController::class, 'stockLevels']);
         Route::get('/reports/shrinkage', [ReportController::class, 'shrinkage']);
+        Route::get('/reports/expiry-risks', [ReportController::class, 'expiryRisks']);
         Route::get('/reports/expiry-risk', [ReportController::class, 'expiryRisk']);
+        Route::get('/reports/activity-log', [ReportController::class, 'activityLog']);
         Route::get('/reports/dashboard-summary', [ReportController::class, 'dashboardSummary']);
         Route::get('/reports/recent-transactions', [ReportController::class, 'recentTransactions']);
+        Route::apiResource('/admin/users', UserController::class);
     });
 });
