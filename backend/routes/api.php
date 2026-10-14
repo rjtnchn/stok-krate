@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\BatchController;
 use App\Http\Controllers\Api\FulfillmentController;
 use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\ReportController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReorderController;
 
@@ -65,5 +66,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('role:Admin')->group(function () {
         Route::post('/alerts/check-now', [ReorderController::class, 'checkNow']);
         Route::put('/alerts/{alert}/resolve', [ReorderController::class, 'resolveAlert']);
+        Route::get('/reports/stock-levels', [ReportController::class, 'stockLevels']);
+        Route::get('/reports/shrinkage', [ReportController::class, 'shrinkage']);
+        Route::get('/reports/expiry-risk', [ReportController::class, 'expiryRisk']);
+        Route::get('/reports/dashboard-summary', [ReportController::class, 'dashboardSummary']);
+        Route::get('/reports/recent-transactions', [ReportController::class, 'recentTransactions']);
     });
 });
