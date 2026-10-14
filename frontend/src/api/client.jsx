@@ -107,8 +107,13 @@ const realApi = {
   getDashboardSummary: () => request("/reports/dashboard-summary"),
   getRecentTransactions: (limit = 10) =>
     request(`/reports/recent-transactions?limit=${limit}`),
+  getActivityLog: (params = "") => request(`/reports/activity-log${params}`),
 
   getCurrentUser: () => request("/auth/me"),
+  getUsers: () => request("/admin/users"),
+  createUser: (payload) => request("/admin/users", { method: "POST", body: JSON.stringify(payload) }),
+  updateUser: (userId, payload) => request(`/admin/users/${userId}`, { method: "PUT", body: JSON.stringify(payload) }),
+  deleteUser: (userId) => request(`/admin/users/${userId}`, { method: "DELETE" }),
   login: async (credentials) => {
     const res = await request("/auth/login", { method: "POST", body: JSON.stringify(credentials) });
     if (res?.token) {
