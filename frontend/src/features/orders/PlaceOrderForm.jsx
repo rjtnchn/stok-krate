@@ -9,7 +9,7 @@ import { Field, Label, Input, Select } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/common/Spinner";
 
-export default function PlaceOrderForm({ onOrderPlaced }) {
+export default function PlaceOrderForm({ onOrderPlaced, onCancel }) {
   const [items, setItems] = useState([]);
   const [itemsStatus, setItemsStatus] = useState("loading"); // loading | ready | error
 
@@ -111,9 +111,16 @@ export default function PlaceOrderForm({ onOrderPlaced }) {
               <p className="mb-4 rounded-md bg-teal-bg px-3 py-2 text-sm text-teal">{confirmation}</p>
             )}
 
-            <Button type="submit" variant="signal" disabled={submitting || itemsStatus !== "ready"}>
-              {submitting ? "Placing order…" : "Place order"}
-            </Button>
+            <div className="flex gap-2">
+              {onCancel && (
+                <Button type="button" variant="outline" onClick={onCancel}>
+                  Cancel
+                </Button>
+              )}
+              <Button type="submit" variant="signal" disabled={submitting || itemsStatus !== "ready"}>
+                {submitting ? "Placing order…" : "Place order"}
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>

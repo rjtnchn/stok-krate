@@ -12,7 +12,6 @@ import {
   LayoutDashboard,
   Bell,
   ClipboardList,
-  PackagePlus,
   Boxes,
   Truck,
   BarChart3,
@@ -20,7 +19,6 @@ import {
   CalendarClock,
   ScrollText,
   Users,
-  UserPlus,
   X,
 } from "lucide-react";
 import { BrandLockup } from "./BrandMark";
@@ -39,7 +37,6 @@ const NAV_SECTIONS = {
       label: "Operations",
       links: [
         { to: "/orders", label: "Orders", icon: ClipboardList },
-        { to: "/orders/new", label: "Place order", icon: PackagePlus },
         { to: "/receive", label: "Receive stock", icon: Truck },
       ],
     },
@@ -47,7 +44,6 @@ const NAV_SECTIONS = {
       label: "Inventory",
       links: [
         { to: "/admin/items", label: "Items & batches", icon: Boxes },
-        { to: "/admin/items/new", label: "Add item", icon: PackagePlus },
       ],
     },
     {
@@ -63,7 +59,6 @@ const NAV_SECTIONS = {
       label: "Access",
       links: [
         { to: "/admin/users", label: "Users", icon: Users },
-        { to: "/admin/users/new", label: "Add user", icon: UserPlus },
       ],
     },
   ],
@@ -76,7 +71,6 @@ const NAV_SECTIONS = {
       label: "Operations",
       links: [
         { to: "/orders", label: "Orders", icon: ClipboardList },
-        { to: "/orders/new", label: "Place order", icon: PackagePlus },
         { to: "/receive", label: "Receive stock", icon: Truck },
       ],
     },

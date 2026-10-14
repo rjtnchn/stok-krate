@@ -52,11 +52,36 @@ function ResolvedNote({ info }) {
 
 export default function ReorderAlertRow({ alert, onResolved }) {
   const { resolvedInfo, error, working, resolve } = useResolve(alert, onResolved);
+  const [confirming, setConfirming] = useState(false);
   const severity = reorderSeverity(alert.available_qty, alert.reorder_point);
   const deficit = reorderDeficit(alert.available_qty, alert.reorder_point);
 
+  async function handleConfirmResolve() {
+    setConfirming(false);
+    await resolve();
+  }
+
   return (
     <>
+      {confirming && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-sm rounded-lg border border-line bg-white p-6 shadow-lg">
+            <h3 className="mb-2 font-display text-lg font-bold text-ink">Resolve Reorder Alert</h3>
+            <p className="mb-6 text-sm text-steel">
+              Are you sure you want to mark the reorder alert for <span className="font-semibold text-ink">{alert.item_name}</span> as resolved?
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="outline" size="sm" onClick={() => setConfirming(false)}>
+                Cancel
+              </Button>
+              <Button type="button" variant="signal" size="sm" onClick={handleConfirmResolve}>
+                Confirm Resolve
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Tr className={resolvedInfo ? "opacity-60" : undefined}>
         <Td>
           <div className="font-medium text-ink">{alert.item_name}</div>
@@ -82,7 +107,7 @@ export default function ReorderAlertRow({ alert, onResolved }) {
               <ResolvedNote info={resolvedInfo} />
             </span>
           ) : (
-            <Button size="sm" variant="outline" onClick={resolve} disabled={working}>
+            <Button size="sm" variant="outline" onClick={() => setConfirming(true)} disabled={working}>
               {working ? "Resolving…" : "Resolve alert"}
             </Button>
           )}

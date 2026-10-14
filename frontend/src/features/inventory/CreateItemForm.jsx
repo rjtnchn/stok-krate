@@ -18,7 +18,7 @@ const EMPTY_FORM = {
   current_sf: "1.00",
 };
 
-export default function CreateItemForm() {
+export default function CreateItemForm({ onCreated, onCancel }) {
   const navigate = useNavigate();
   const [form, setForm] = useState(EMPTY_FORM);
   const [fieldErrors, setFieldErrors] = useState({});
@@ -48,8 +48,12 @@ export default function CreateItemForm() {
     };
 
     try {
-      await api.createItem(payload);
-      navigate("/admin/items", { replace: true });
+      const created = await api.createItem(payload);
+      if (onCreated) {
+        onCreated(created);
+      } else {
+        navigate("/admin/items", { replace: true });
+      }
     } catch (err) {
       if (err instanceof ApiError && err.status === 422 && err.body?.errors) {
         setFieldErrors(err.body.errors);
@@ -149,9 +153,16 @@ export default function CreateItemForm() {
 
             {formError && <p className="mb-4 rounded-md bg-rust-bg px-3 py-2 text-sm text-rust">{formError}</p>}
 
-            <Button type="submit" variant="signal" disabled={submitting}>
-              {submitting ? "Creating…" : "Create item"}
-            </Button>
+            <div className="flex gap-2">
+              {onCancel && (
+                <Button type="button" variant="outline" onClick={onCancel}>
+                  Cancel
+                </Button>
+              )}
+              <Button type="submit" variant="signal" disabled={submitting}>
+                {submitting ? "Creating…" : "Create item"}
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>

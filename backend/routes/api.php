@@ -7,7 +7,7 @@ use App\Http\Controllers\Api\FulfillmentController;
 use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ReportController;
-use App\Http\Controllers\ReorderController;
+use App\Http\Controllers\Api\ReorderController;
 use Illuminate\Support\Facades\Route;
 
 
