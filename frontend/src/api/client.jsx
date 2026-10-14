@@ -1,13 +1,13 @@
 // api/client.js
-// Thin fetch wrapper shared by all Items/Batches components.
-// Assumes a same-origin API at /api/... — change API_BASE if it lives elsewhere.
+// Thin fetch wrapper shared by all API consumers.
+// Local development uses Vite's /api proxy; production can point to Railway.
 
 import { ApiError, getErrorMessage } from "./errors";
 import { mockApi } from "./mockApi";
 
 const USE_MOCK_DATA = false;
 
-const API_BASE = "/api";
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || "/api").replace(/\/+$/, "");
 const MUTATING_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
 function readCookie(name) {
