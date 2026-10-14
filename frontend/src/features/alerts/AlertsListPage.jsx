@@ -124,7 +124,6 @@ function AlertsListPageInner() {
     <div>
       <PageHeader
         title="Alerts"
-        description="Unresolved reorder and expiry alerts raised by the last check."
         actions={<CheckNowButton onChecked={handleCheckedNow} />}
       />
 
@@ -315,7 +314,7 @@ function AlertsListPageInner() {
 
 export default function AlertsListPage() {
   return (
-    <RoleGuard allow={["admin"]}>
+    <RoleGuard allow={["Admin"]}>
       <AlertsListPageInner />
     </RoleGuard>
   );

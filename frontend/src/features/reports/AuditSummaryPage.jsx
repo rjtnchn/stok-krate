@@ -153,7 +153,7 @@ function AuditSummaryPageInner() {
 
 export default function AuditSummaryPage() {
   return (
-    <RoleGuard allow={["admin"]}>
+    <RoleGuard allow={["Admin"]}>
       <AuditSummaryPageInner />
     </RoleGuard>
   );

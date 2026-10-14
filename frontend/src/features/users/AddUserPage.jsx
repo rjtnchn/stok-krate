@@ -5,43 +5,59 @@
 // submit for a real api.createUser(payload) call once that endpoint exists.
 
 import { useState } from "react";
+import { api, getErrorMessage } from "@/api/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Field, Label, Input, FieldError } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const ROLES = [
-  { value: "staff", label: "Staff", description: "Places and fulfils orders" },
-  { value: "admin", label: "Admin", description: "Full system access" },
+  { value: "Staff", label: "Staff", description: "Places and fulfils orders" },
+  { value: "Admin", label: "Admin", description: "Full system access" },
 ];
 
 export default function AddUserPanel() {
-  const [form, setForm] = useState({ name: "", username: "", role: "staff" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", role: "Staff" });
   const [errors, setErrors] = useState({});
-  const [submitted, setSubmitted] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    const nextErrors = {};
-    if (!form.name.trim()) nextErrors.name = "Name is required.";
-    if (!form.username.trim()) nextErrors.username = "Username is required.";
-    setErrors(nextErrors);
+    setErrors({});
+    setSuccessMessage("");
+    setIsSubmitting(true);
 
-    if (Object.keys(nextErrors).length === 0) {
-      setSubmitted(true);
-      setForm({ name: "", username: "", role: "staff" });
+    try {
+      await api.createUser(form);
+      setSuccessMessage("User created successfully.");
+      setForm({ name: "", email: "", password: "", role: "Staff" });
+    } catch (err) {
+      if (err.data?.errors) {
+        setErrors(err.data.errors);
+      } else {
+        setErrors({ general: getErrorMessage(err) });
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
   return (
     <div className="max-w-lg">
-      {submitted && (
+      {successMessage && (
         <p className="mb-4 rounded-md bg-teal-bg px-3 py-2 text-sm text-teal">
-          User added (demo mode — not retained).
+          {successMessage}
+        </p>
+      )}
+
+      {errors.general && (
+        <p className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
+          {errors.general}
         </p>
       )}
 
@@ -56,18 +72,31 @@ export default function AddUserPanel() {
                 onChange={(e) => update("name", e.target.value)}
                 placeholder="e.g. Juan Garcia"
               />
-              <FieldError>{errors.name}</FieldError>
+              <FieldError>{errors.name?.[0] || errors.name}</FieldError>
             </Field>
 
             <Field>
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="email">Email address</Label>
               <Input
-                id="username"
-                value={form.username}
-                onChange={(e) => update("username", e.target.value)}
-                placeholder="e.g. jgarcia"
+                id="email"
+                type="email"
+                value={form.email}
+                onChange={(e) => update("email", e.target.value)}
+                placeholder="e.g. jgarcia@wb.com"
               />
-              <FieldError>{errors.username}</FieldError>
+              <FieldError>{errors.email?.[0] || errors.email}</FieldError>
+            </Field>
+
+            <Field>
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={form.password}
+                onChange={(e) => update("password", e.target.value)}
+                placeholder="At least 8 characters"
+              />
+              <FieldError>{errors.password?.[0] || errors.password}</FieldError>
             </Field>
 
             <Field>
@@ -88,10 +117,11 @@ export default function AddUserPanel() {
                   </button>
                 ))}
               </div>
+              <FieldError>{errors.role?.[0] || errors.role}</FieldError>
             </Field>
 
-            <Button type="submit" variant="signal" className="mt-2">
-              Add user
+            <Button type="submit" variant="signal" className="mt-2" disabled={isSubmitting}>
+              {isSubmitting ? "Adding user..." : "Add user"}
             </Button>
           </form>
         </CardContent>

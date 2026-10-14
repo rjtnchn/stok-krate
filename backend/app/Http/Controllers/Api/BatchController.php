@@ -19,11 +19,10 @@ class BatchController extends Controller
      */
     public function index(Request $request, Item $item): JsonResponse
     {
-        $perPage = max(1, min(100, (int) $request->input('per_page', 15)));
         $batches = $item->batches()
             ->with('transactions')
             ->latest('id')
-            ->paginate($perPage);
+            ->get();
 
         return response()->json($batches);
     }

@@ -23,9 +23,20 @@ cp .env.example .env
 
 ### Step 3: Confirm `.env` contains
 ```
-VITE_API_BASE_URL=http://localhost:8000/api/v1
+VITE_API_BASE_URL=http://localhost:8000/api
 ```
-This should point to your locally running Laravel API.
+This should point to your locally running Laravel API. If the variable is omitted,
+the client uses `/api`, which is proxied by Vite during local development.
+
+For the Vercel project, set `VITE_API_BASE_URL` to the public Railway backend URL
+followed by `/api`, for example:
+
+```
+VITE_API_BASE_URL=https://your-backend.up.railway.app/api
+```
+
+Redeploy Vercel after changing this variable because Vite embeds `VITE_*` values
+into the frontend build.
 
 ### Step 4: Install dependencies
 ```bash

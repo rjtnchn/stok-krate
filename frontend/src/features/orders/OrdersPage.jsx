@@ -1,28 +1,50 @@
-// Orders workspace: the order history and the place-order form on one page, by
-// tab. /orders and /orders/new both land here, so the SideNav's "Place order"
-// deep link still works.
-//
-// No role guard, matching the routes this replaces: both roles place orders,
-// and the API is what filters admin-sees-all from staff-sees-own.
-
+import { useState, useCallback } from "react";
 import { PageHeader } from "@/components/ui/page-header";
-import { RouteTabs } from "@/components/ui/tab-nav";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import OrdersListPanel from "./OrdersListPage";
 import PlaceOrderForm from "./PlaceOrderForm";
 
-const TABS = [
-  { key: "orders", to: "/orders", label: "Orders", element: <OrdersListPanel /> },
-  { key: "new", to: "/orders/new", label: "Place order", element: <PlaceOrderForm /> },
-];
-
 export default function OrdersPage() {
+  const [showPlaceModal, setShowPlaceModal] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleOrderPlaced = useCallback(() => {
+    setShowPlaceModal(false);
+    setRefreshKey((k) => k + 1);
+  }, []);
+
   return (
     <div>
       <PageHeader
         title="Orders"
-        description="Every order placed against the warehouse, most recent first — and the form to place another."
+        actions={
+          <Button variant="signal" size="sm" onClick={() => setShowPlaceModal(true)}>
+            Place order
+          </Button>
+        }
       />
-      <RouteTabs tabs={TABS} label="Order views" />
+
+      {showPlaceModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <Card className="max-h-[90vh] w-full max-w-lg overflow-y-auto shadow-lg">
+            <CardContent className="pt-6">
+              <div className="mb-4 flex items-start justify-between gap-3">
+                <h3 className="font-display text-lg font-bold text-ink">Place order</h3>
+                <Button type="button" variant="ghost" size="sm" onClick={() => setShowPlaceModal(false)}>
+                  Close
+                </Button>
+              </div>
+              <PlaceOrderForm
+                onOrderPlaced={handleOrderPlaced}
+                onCancel={() => setShowPlaceModal(false)}
+              />
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      <OrdersListPanel key={refreshKey} />
     </div>
   );
 }

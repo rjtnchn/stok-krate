@@ -18,6 +18,16 @@ class StoreBatchRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'quantity_on_hand' => $this->input('quantity_on_hand') ?? $this->input('quantity', 0),
+        ]);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, ValidationRule|array<mixed>|string>

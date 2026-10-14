@@ -139,7 +139,7 @@ function QuickJumpSearch({ role }) {
   );
 }
 
-function AccountMenu({ role }) {
+function AccountMenu({ role, user }) {
   const navigate = useNavigate();
   const containerRef = useRef(null);
   const [open, setOpen] = useState(false);
@@ -164,6 +164,9 @@ function AccountMenu({ role }) {
     }
   }
 
+  const displayName = user?.name ?? role ?? "Account";
+  const initial = displayName[0] ? displayName[0].toUpperCase() : "?";
+
   return (
     <div className="relative" ref={containerRef}>
       <button
@@ -174,18 +177,18 @@ function AccountMenu({ role }) {
         className="flex h-8 items-center gap-1.5 rounded-md border border-shell-line px-2 text-[12px] font-semibold text-onshell hover:bg-shell-3"
       >
         <span className="flex h-4 w-4 items-center justify-center rounded-sm bg-signal-bright/20 text-[9px] font-bold text-signal-bright">
-          {role ? role[0].toUpperCase() : "?"}
+          {initial}
         </span>
-        <span className="capitalize">{role ?? "Account"}</span>
+        <span className="max-w-[120px] truncate">{displayName}</span>
       </button>
 
       {open && (
         <div
           role="menu"
-          className="absolute right-0 z-40 mt-1 w-40 overflow-hidden rounded-md border border-line bg-white py-1 shadow-sm"
+          className="absolute right-0 z-40 mt-1 w-48 overflow-hidden rounded-md border border-line bg-white py-1 shadow-sm"
         >
-          <div className="border-b border-line px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-steel-soft">
-            Signed in · {role}
+          <div className="border-b border-line px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-steel-soft truncate">
+            Signed in · {displayName} {role ? `(${role})` : ""}
           </div>
           <button
             type="button"
@@ -203,11 +206,11 @@ function AccountMenu({ role }) {
 }
 
 export default function TopNav({ navOpen = false, onToggleNav, menuButtonRef }) {
-  const { role } = useCurrentUser();
+  const { role, user } = useCurrentUser();
   const [alertCount, setAlertCount] = useState(0);
 
   const loadAlertCount = useCallback(async () => {
-    if (role !== "admin") return;
+    if (role !== "Admin") return;
     try {
       const [reorder, expiry] = await Promise.all([
         api.getReorderAlerts(false),
@@ -244,7 +247,7 @@ export default function TopNav({ navOpen = false, onToggleNav, menuButtonRef }) 
       <div className="ml-auto flex items-center gap-2">
         <QuickJumpSearch role={role} />
 
-        {role === "admin" && (
+        {role === "Admin" && (
           <NavLink
             to="/admin/alerts"
             className={cn(
@@ -263,7 +266,7 @@ export default function TopNav({ navOpen = false, onToggleNav, menuButtonRef }) 
           </NavLink>
         )}
 
-        <AccountMenu role={role} />
+        <AccountMenu role={role} user={user} />
       </div>
     </header>
   );

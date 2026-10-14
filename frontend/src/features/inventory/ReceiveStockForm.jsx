@@ -150,7 +150,7 @@ function ReceiveStockFormInner({ itemId, onReceived }) {
 
 export default function ReceiveStockForm(props) {
   return (
-    <RoleGuard allow={["admin", "staff"]}>
+    <RoleGuard allow={["Admin", "Staff"]}>
       <ReceiveStockFormInner {...props} />
     </RoleGuard>
   );

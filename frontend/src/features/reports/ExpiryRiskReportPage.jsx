@@ -83,7 +83,7 @@ function ExpiryRiskReportPageInner() {
 
 export default function ExpiryRiskReportPage() {
   return (
-    <RoleGuard allow={["admin"]}>
+    <RoleGuard allow={["Admin"]}>
       <ExpiryRiskReportPageInner />
     </RoleGuard>
   );

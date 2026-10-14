@@ -29,8 +29,8 @@ function HomeRedirect() {
   const { role, isLoading } = useCurrentUser();
 
   if (isLoading) return <p className="p-6 text-sm text-steel">Loading…</p>;
-  if (role === "admin") return <Navigate to="/admin/dashboard" replace />;
-  if (role === "staff") return <Navigate to="/staff/dashboard" replace />;
+  if (role === "Admin") return <Navigate to="/admin/dashboard" replace />;
+  if (role === "Staff") return <Navigate to="/staff/dashboard" replace />;
   return <Navigate to="/login" replace />;
 }
 
@@ -57,16 +57,14 @@ export default function App() {
             form share one page; the path selects the tab, which is what keeps
             the SideNav's "Add item" deep link working. */}
         <Route path="/admin/items" element={<ItemsPage />} />
-        <Route path="/admin/items/batches" element={<ItemsPage />} />
-        <Route path="/admin/items/new" element={<ItemsPage />} />
+        <Route path="/admin/items/batches" element={<Navigate to="/admin/items" replace />} />
+        <Route path="/admin/items/new" element={<Navigate to="/admin/items" replace />} />
         {/* Static segments above outrank this, so :itemId only catches ids. */}
         <Route path="/admin/items/:itemId" element={<ItemDetailPage />} />
 
-        {/* Orders workspace — history and Place order share one page, both
-            roles. Not role-restricted: the API already filters admin-sees-all
-            vs staff-sees-own. */}
+        {/* Orders workspace — history */}
         <Route path="/orders" element={<OrdersPage />} />
-        <Route path="/orders/new" element={<OrdersPage />} />
+        <Route path="/orders/new" element={<Navigate to="/orders" replace />} />
 
         {/* Stock receipt — reachable by Staff as well as Admin (FR-08), so it
             stays its own page rather than a tab on the admin-only Items page. */}

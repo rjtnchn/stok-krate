@@ -1,6 +1,6 @@
 // api/auth.js
 // Placeholder auth hook — replace with your real auth context/provider.
-// Expected to return { role: "admin" | "staff" | null, isLoading: boolean }.
+// Expected to return { role: "Admin" | "Staff" | null, isLoading: boolean }.
 
 import { useContext, createContext, useState, useEffect, useCallback } from "react";
 import { Navigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import { api } from "./client";
 
 export const AuthContext = createContext({
   role: null,
+  user: null,
   isLoading: false,
   login: async () => {},
   logout: async () => {},
@@ -34,19 +35,32 @@ export function useCurrentUser() {
 // already works independently of this.
 export function AuthProvider({ children }) {
   const [role, setRole] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(() => !!sessionStorage.getItem("auth_token"));
 
   useEffect(() => {
     let cancelled = false;
 
     async function loadSession() {
+      const token = sessionStorage.getItem("auth_token");
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const me = await api.getCurrentUser();
-        if (!cancelled) setRole(me?.role ?? null);
+        if (!cancelled) {
+          setRole(me?.role ?? null);
+          setUser(me ?? null);
+        }
       } catch {
         // No session (401), no backend yet, or the request failed —
         // treat as logged out either way.
-        if (!cancelled) setRole(null);
+        if (!cancelled) {
+          setRole(null);
+          setUser(null);
+        }
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -60,7 +74,8 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async (credentials) => {
     const result = await api.login(credentials); // throws ApiError on failure
-    setRole(result?.role ?? null);
+    setRole(result?.user?.role ?? null);
+    setUser(result?.user ?? null);
     return result;
   }, []);
 
@@ -71,16 +86,18 @@ export function AuthProvider({ children }) {
       // Clear client-side role even if the network call fails, so the UI
       // doesn't get stuck showing a logged-in state.
       setRole(null);
+      setUser(null);
     }
   }, []);
 
   // Dev-only: set role directly, no network call. See LoginPage's bypass buttons.
   const setDevRole = useCallback((devRole) => {
     setRole(devRole);
+    setUser({ name: devRole === "Admin" ? "Admin User" : "Staff User", role: devRole });
   }, []);
 
   return (
-    <AuthContext.Provider value={{ role, isLoading, login, logout, setDevRole }}>
+    <AuthContext.Provider value={{ role, user, isLoading, login, logout, setDevRole }}>
       {children}
     </AuthContext.Provider>
   );
@@ -89,8 +106,8 @@ export function AuthProvider({ children }) {
 // Where an authenticated-but-wrong-role user lands, if the caller doesn't
 // specify redirectTo. Update these paths to match your actual router.
 function defaultRouteForRole(role) {
-  if (role === "admin") return "/admin/dashboard";
-  if (role === "staff") return "/staff/dashboard";
+  if (role === "Admin") return "/admin/dashboard";
+  if (role === "Staff") return "/staff/dashboard";
   return "/login";
 }
 
